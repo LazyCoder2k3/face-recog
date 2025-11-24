@@ -1,0 +1,88 @@
+1. Register face:
+- REST:
+{
+    "TOPIC": "VMXSys/VMXSLSMobile/face",
+    "PAYLOAD": {
+        "action": "register",
+        "username": "phuong",
+        "face_urls": [
+            "http://10.60.1.90:2777/face_920_1.jpg",
+            "http://10.60.1.90:2777/face_920_2.jpg",
+            "http://10.60.1.90:2777/face_920_3.jpg"
+        ]
+    }
+}
+- AIService:
+{
+    "TOPIC": "VMXSys/VAIPLF2CtrlBox/accesscontrol",
+    "PAYLOAD": {
+        "action": "register",
+        "username": "phuong",
+        "face_urls": [
+            "http://10.60.1.90:2777/face_920_1.jpg",
+            "http://10.60.1.90:2777/face_920_2.jpg",
+            "http://10.60.1.90:2777/face_920_3.jpg"
+        ],
+		"faceId": "1111",
+		"result": "completed/failed"
+    }
+}
+2. Face Recognition:
+- AIService:
+{
+    "TOPIC": "VMXSys/VAIPLF2CtrlBox/accesscontrol",
+    "PAYLOAD": {
+        "action": "recognize",
+        "deviceId": 1,
+		"faceId": "0001"
+    }
+}
+3. Remove Users:
+- REST:
+{
+    "TOPIC": "VMXSys/CtrlBox2Device/accesscontrol",
+    "PAYLOAD": {
+        "action": "remove",
+        "faceId": "0001",
+        "command": "user",
+    }
+}
+{
+    "TOPIC": "VMXSys/CtrlBox2Device/accesscontrol",
+    "PAYLOAD": {
+        "action": "remove",
+        "command": "all",
+        "deviceId": 1
+    }
+}
+- AIService:
+{
+    "TOPIC": "VMXSys/VAIPLF2CtrlBox/accesscontrol",
+    "PAYLOAD": {
+        "action": "remove",
+        "faceId": "1111",
+        "command": "user",
+        "result": "completed/failed"
+    }
+}
+{
+    "TOPIC": "VMXSys/VAIPLF2CtrlBox/accesscontrol",
+    "PAYLOAD": {
+        "action": "remove",
+		"command": "all",
+		"deviceId": 1,
+        "result": "completed/failed"
+    }
+}
+4. Camera config:
+- REST:
+{
+	"TOPIC": "VMXSys/REST2VAIPLF/AiConfig",
+	"PAYLOAD": {
+        "action": "config",
+        "url": "rtsp://adminOnvif:Vision123@10.60.1.170/Streaming/Channels/101?transportmode=unicast&profile=Profile_1",
+        "values": "",
+        "camera_id": 1,
+		"reservation_id": -1
+	}
+}

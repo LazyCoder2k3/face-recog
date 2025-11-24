@@ -35,12 +35,21 @@
 #include "vnn_global.h"
 #include "vnn_pre_process.h"
 #include "vnn_post_process_sface.h"
-#include "vnn_post_process_facedetector.hpp"
+// OLD FACE DETECTOR - Commented out for Yunet migration
+// #include "vnn_post_process_facedetector.hpp"
 #include "vnn_post_process_anfispoof.h"
 
+// NEW YUNET FACE DETECTOR - Network Binary (.nb format)
+#include "vnn_pre_process_yunet_network_binary.h"
+#include "vnn_post_process_yunet_network_binary.h"
+
 extern "C" {
-#include "vnn_facedetector3uint8.h"
-#include "vnn_sface.h"
+// OLD FACE DETECTOR - Commented out
+// #include "vnn_facedetector3uint8.h"
+// NEW YUNET FACE DETECTOR - Network Binary (.nb format)
+#include "vnn_yunet_network_binary.h"
+// #include "vnn_sface.h"  // Old format: sface.export.data
+#include "vnn_sface_network_binary.h"  // New format: sface.nb (optimized NBG binary)
 #include "vnn_antispoof.h"
 }
 
@@ -68,6 +77,205 @@ static int frame_counter = 0;
 static std::map<std::string, time_t> last_access_times;
 #define MIN_ACCESS_INTERVAL_SECONDS (5 * 60)  // 5 minutes in seconds
 
+// --- Helper functions and metadata for preprocessing (copied from vnn_pre_process_yunet_network_binary.cpp) ---
+#define VNN_PREPRO_NONE -1
+#define VNN_PREPRO_REORDER 0
+#define VNN_PREPRO_MEAN 1
+#define VNN_PREPRO_SCALE 2
+#define VNN_PREPRO_NUM 3 // Total number of preprocess steps
+
+// TYPEDEFS REMOVED TO PREVENT MULTIPLE DEFINITION ERRORS
+// They are already included from vnn_pre_process.h
+
+#define INPUT_META_NUM 1
+static vnn_input_meta_t input_meta_tab_yunet[INPUT_META_NUM];
+static void _load_input_meta_yunet()
+{
+    uint32_t i;
+    for (i = 0; i < INPUT_META_NUM; i++)
+    {
+        memset(&input_meta_tab_yunet[i].image.preprocess,
+            VNN_PREPRO_NONE, sizeof(int32_t) * VNN_PREPRO_NUM);
+    }
+    /* lid: input_118 - Yunet expects input size [640, 640, 3] */
+    // ===== YUNET RGB INPUT MODE (RESTORED - Original working version) =====
+    input_meta_tab_yunet[0].image.preprocess[0] = VNN_PREPRO_REORDER;  // BGR to RGB conversion
+    input_meta_tab_yunet[0].image.preprocess[1] = VNN_PREPRO_MEAN;
+    input_meta_tab_yunet[0].image.preprocess[2] = VNN_PREPRO_SCALE;
+    
+    input_meta_tab_yunet[0].image.reorder[0] = 2;  // BGR to RGB reorder
+    input_meta_tab_yunet[0].image.reorder[1] = 1;
+    input_meta_tab_yunet[0].image.reorder[2] = 0;
+    
+    input_meta_tab_yunet[0].image.mean[0] = 0;
+    input_meta_tab_yunet[0].image.mean[1] = 0;
+    input_meta_tab_yunet[0].image.mean[2] = 0;
+    input_meta_tab_yunet[0].image.scale[0] = 1.0;
+    input_meta_tab_yunet[0].image.scale[1] = 1.0;
+    input_meta_tab_yunet[0].image.scale[2] = 1.0;
+}
+
+static float *_imageData_to_float32
+    (
+    uint8_t *bmpData,
+    vsi_nn_tensor_t *tensor
+    )
+{
+    float *fdata;
+    vsi_size_t sz,i;
+
+    fdata = NULL;
+    sz = vsi_nn_GetElementNum(tensor);
+    fdata = (float *)malloc(sz * sizeof(float));
+    // TEST_CHECK_PTR(fdata, final); // Cannot use TEST_CHECK_PTR here, needs to be handled by caller
+
+    if (!fdata) return NULL; // Manual check
+
+    for(i = 0; i < sz; i++)
+    {
+        fdata[i] = (float)bmpData[i];
+    }
+
+    // final: // Label not defined
+    return fdata;
+}
+
+static void _data_scale
+    (
+    float *fdata,
+    vnn_input_meta_t *meta,
+    vsi_nn_tensor_t *tensor
+    )
+{
+    vsi_size_t s0,s1,s2;
+    vsi_size_t i,j,offset;
+    float val,scale;
+
+    s0 = tensor->attr.size[0];
+    s1 = tensor->attr.size[1];
+    s2 = tensor->attr.size[2];
+    for(i = 0; i < s2; i++)
+    {
+        offset = s0 * s1 * i;
+        scale = meta->image.scale[i];
+        for(j = 0; j < s0 * s1; j++)
+        {
+            val = fdata[offset + j] * scale;
+            fdata[offset + j ] = val;
+        }
+    }
+
+}
+
+static void _data_mean
+    (
+    float *fdata,
+    vnn_input_meta_t *meta,
+    vsi_nn_tensor_t *tensor
+    )
+{
+    vsi_size_t s0,s1,s2;
+    vsi_size_t i,j,offset;
+    float val,mean;
+
+    s0 = tensor->attr.size[0];
+    s1 = tensor->attr.size[1];
+    s2 = tensor->attr.size[2];
+
+    for(i = 0; i < s2; i++)
+    {
+        offset = s0 * s1 * i;
+        mean = meta->image.mean[i];
+        for(j = 0; j < s0 * s1; j++)
+        {
+            val = fdata[offset + j] - mean;
+            fdata[offset + j ] = val;
+        }
+    }
+
+}
+
+static void _data_transform
+    (
+    float *fdata,
+    vnn_input_meta_t *meta,
+    vsi_nn_tensor_t *tensor
+    )
+{
+    vsi_size_t s0,s1,s2;
+    vsi_size_t i,j,offset,sz,order;
+    float * data;
+    uint32_t * reorder;
+
+    data = NULL;
+    reorder = meta->image.reorder;
+    s0 = tensor->attr.size[0];
+    s1 = tensor->attr.size[1];
+    s2 = tensor->attr.size[2];
+    sz = vsi_nn_GetElementNum(tensor);
+    data = (float *)malloc(sz * sizeof(float));
+    // TEST_CHECK_PTR(data, final); // Cannot use TEST_CHECK_PTR here, needs to be handled by caller
+    if (!data) return; // Manual check
+    memset(data, 0, sizeof(float) * sz);
+
+    for(i = 0; i < s2; i++)
+    {
+        if(s2 > 1 && reorder[i] <= s2)
+        {
+            order = reorder[i];
+        }
+        else
+        {
+            order = i;
+        }
+
+        offset = s0 * s1 * i;
+        for(j = 0; j < s0 * s1; j++)
+        {
+            data[j + offset] = fdata[j * s2 + order];
+        }
+    }
+
+    memcpy(fdata, data, sz * sizeof(float));
+    // final: // Label not defined
+    if(data)free(data);
+}
+
+static uint8_t *_float32_to_dtype
+    (
+    float *fdata,
+    vsi_nn_tensor_t *tensor
+    )
+{
+    vsi_status status;
+    uint8_t *data;
+    vsi_size_t sz,i,stride;
+
+    sz = vsi_nn_GetElementNum(tensor);
+    stride = vsi_nn_TypeGetBytes(tensor->attr.dtype.vx_type);
+    if(stride == 0)
+    {
+        stride = 1;
+    }
+    data = (uint8_t *)malloc(stride * sz * sizeof(uint8_t));
+    // TEST_CHECK_PTR(data, final); // Cannot use TEST_CHECK_PTR here, needs to be handled by caller
+    if (!data) return NULL; // Manual check
+    memset(data, 0, stride * sz * sizeof(uint8_t));
+
+    for(i = 0; i < sz; i++)
+    {
+        status = vsi_nn_Float32ToDtype(fdata[i], &data[stride * i], &tensor->attr.dtype);
+        if(status != VSI_SUCCESS)
+        {
+            if(data)free(data);
+            return NULL;
+        }
+    }
+
+    // final: // Label not defined
+    return data;
+}
+// --- End of Helper functions and metadata for preprocessing ---
 
 /*-------------------------------------------
                   Prototype Functions
@@ -294,7 +502,8 @@ static void vnn_ReleaseNeuralNetworkSface
     vsi_nn_graph_t *graph
     )
 {
-    vnn_ReleaseSface( graph, TRUE );
+    // vnn_ReleaseSface( graph, TRUE );  // Old format
+    vnn_ReleaseSfaceNBG( graph, TRUE );  // New NBG format
     if (vnn_UseImagePreprocessNode())
     {
         vnn_ReleaseBufferImage();
@@ -367,8 +576,8 @@ static vsi_status vnn_ProcessGraph
     vsi_status status = VSI_FAILURE;
     int32_t i,loop;
     char *loop_s;
-    uint64_t tmsStart, tmsEnd, sigStart, sigEnd;
-    float msVal, usVal;
+    // uint64_t tmsStart, tmsEnd, sigStart, sigEnd; // Removed to clean up unused variable warnings
+    // float msVal, usVal; // Removed to clean up unused variable warnings
 
     status = VSI_FAILURE;
     loop = 1; /* default loop time is 1 */
@@ -427,24 +636,34 @@ final:
 static vsi_status vnn_PreProcessNeuralNetwork
     (
     vsi_nn_graph_t *graph,
-    // int argc,
-    // char **argv,
     uint32_t input_num,
     uint8_t *input_buf
     )
 {
-    /*
-     * argv0:   execute file
-     * argv1:   data file
-     * argv2~n: inputs n file
-     */
-    // const char **inputs = (const char **)argv + 2;
-    // uint32_t input_num = argc - 2;
+    vsi_status status = VSI_FAILURE;
+    vsi_nn_tensor_t *tensor;
 
-    return vnn_PreProcess( graph, /*inputs,*/ input_num, input_buf );
+    if(input_num != graph->input.num)
+    {
+        printf("Graph need %u inputs, but enter %u inputs!!!\n",
+               graph->input.num, input_num);
+        return status;
+    }
+
+    tensor = vsi_nn_GetTensor( graph, graph->input.tensors[0] );
+    
+    /* Copy the Pre-processed data to input tensor */
+    status = vsi_nn_CopyDataToTensor(graph, tensor, input_buf);
+    TEST_CHECK_STATUS(status, final);
+
+    status = VSI_SUCCESS;
+final:
+    return status;
 }
 #if 1
 // Add by NhanTran
+// OLD FACE DETECTOR - Commented out for Yunet migration
+/*
 static vsi_nn_graph_t *vnn_CreateNeuralNetworkFacedetector3Uint8
     (
     const char *data_file_name
@@ -480,7 +699,47 @@ static void vnn_ReleaseNeuralNetworkFacedetector3Uint8
         vnn_ReleaseBufferImage();
     }
 }
+*/
 
+// NEW YUNET FACE DETECTOR
+static vsi_nn_graph_t *vnn_CreateNeuralNetworkYunet
+    (
+    const char *data_file_name
+    )
+{
+    vsi_nn_graph_t *graph = NULL;
+    uint64_t tmsStart, tmsEnd, msVal, usVal;
+
+    tmsStart = get_perf_count();
+    graph = vnn_CreateYunetNBG( data_file_name, NULL,
+                      vnn_GetPreProcessMapYunet(), vnn_GetPreProcessMapCountYunet(),
+                      vnn_GetPostProcessMapYunet(), vnn_GetPostProcessMapCountYunet() );
+    TEST_CHECK_PTR(graph, final);
+
+    tmsEnd = get_perf_count();
+    msVal = (tmsEnd - tmsStart)/1000000;
+    usVal = (tmsEnd - tmsStart)/1000;
+    printf("[YUNET] %s():%d\n", __FUNCTION__, __LINE__);
+    printf("[YUNET] Create Neural Network: %"VSI_UINT64_SPECIFIER"ms or %"VSI_UINT64_SPECIFIER"us\n", msVal, usVal);
+
+final:
+    return graph;
+}
+
+static void vnn_ReleaseNeuralNetworkYunet
+    (
+    vsi_nn_graph_t *graph
+    )
+{
+    vnn_ReleaseYunetNBG( graph, TRUE );
+    if (vnn_UseImagePreprocessNodeYunet())
+    {
+        vnn_ReleaseBufferImageYunet();
+    }
+}
+
+// OLD FACE DETECTOR - Commented out
+/*
 static vsi_status vnn_PostProcessNeuralNetworkFaceDetector3Uint8
     (
     vsi_nn_graph_t *graph,
@@ -488,6 +747,19 @@ static vsi_status vnn_PostProcessNeuralNetworkFaceDetector3Uint8
     )
 {
     return vnn_PostProcessFacedetector3Uint8( graph, faces );
+}
+*/
+
+// NEW YUNET FACE DETECTOR
+static vsi_status vnn_PostProcessNeuralNetworkYunet
+    (
+    vsi_nn_graph_t *graph,
+    std::vector<YunetFaceObject>& faces,
+    int inputW,
+    int inputH
+    )
+{
+    return vnn_PostProcessYunet( graph, faces, inputW, inputH );
 }
 #if ANTI_SPOOFING
 static vsi_nn_graph_t *vnn_CreateNeuralNetworkAntiSpoof
@@ -524,7 +796,8 @@ static vsi_nn_graph_t *vnn_CreateNeuralNetworkSface
     uint64_t tmsStart, tmsEnd, msVal, usVal;
 
     tmsStart = get_perf_count();
-    graph = vnn_CreateSface( data_file_name, NULL,
+    // graph = vnn_CreateSface( data_file_name, NULL,  // Old format
+    graph = vnn_CreateSfaceNBG( data_file_name, NULL,  // New NBG format
                       vnn_GetPreProcessMap(), vnn_GetPreProcessMapCount(),
                       vnn_GetPostProcessMap(), vnn_GetPostProcessMapCount() );
     TEST_CHECK_PTR(graph, final);
@@ -544,7 +817,7 @@ uint8_t* pre_process_get_buffer_from_mat(cv::Mat matImg, uint32_t *buffer_size) 
     if (!matImg.empty()) {
         uint32_t buff_size = matImg.cols * matImg.rows * sizeof(uint8_t)*matImg.channels();
 
-        data_buffer = malloc(buff_size);
+        data_buffer = (uint8_t*)malloc(buff_size);
 
         if (data_buffer) {
             memcpy(data_buffer, matImg.data, buff_size);
@@ -560,6 +833,7 @@ uint8_t* pre_process_get_buffer_from_mat(cv::Mat matImg, uint32_t *buffer_size) 
 // Add by NhanTran
 vsi_status statusFaceDetect = VSI_FAILURE;
 vsi_status statusSface = VSI_FAILURE;
+#endif
 #if ANTI_SPOOFING
 vsi_status statusAntiSpf = VSI_FAILURE;
 #endif
@@ -575,24 +849,31 @@ int32_t init_neural_networks() {
     const char* model_name_anti_spf = nullptr;
 #endif
     std::cout << "S/W Version : " << VMX_SW_VERSION << std::endl;
-    model_name_facedetect = "network_binary_face_detector.nb";
-    model_name_sface = "sface.export.data";
+    // OLD FACE DETECTOR - Commented out
+    // model_name_facedetect = "network_binary_face_detector.nb";
+    // NEW YUNET FACE DETECTOR
+    model_name_facedetect = "Yunet.nb";
+    // model_name_sface = "sface.export.data";  // Old format
+    model_name_sface = "sface.nb";  // New NBG format (optimized)
     // model_name_sface = "facenet512.export.data";
 #if ANTI_SPOOFING
     model_name_anti_spf = "anti-spoof-mn3.export.data";
 #endif
-    std::cout << "model_name_facedetect: " << model_name_facedetect << std::endl;
+    std::cout << "model_name_facedetect (YUNET): " << model_name_facedetect << std::endl;
     std::cout << "model_name_sface: " << model_name_sface << std::endl;    
 #if ANTI_SPOOFING
     std::cout << "model_name_anti_spf: " << model_name_anti_spf << std::endl;    
 #endif
-    graphFaceDetect = vnn_CreateNeuralNetworkFacedetector3Uint8(model_name_facedetect);
+    // OLD FACE DETECTOR - Commented out
+    // graphFaceDetect = vnn_CreateNeuralNetworkFacedetector3Uint8(model_name_facedetect);
+    // NEW YUNET FACE DETECTOR
+    graphFaceDetect = vnn_CreateNeuralNetworkYunet(model_name_facedetect);
     graphSface = vnn_CreateNeuralNetworkSface(model_name_sface);
 #if ANTI_SPOOFING
     graphAntiSpf = vnn_CreateNeuralNetworkAntiSpoof(model_name_anti_spf);
 #endif
     if (!graphFaceDetect) {
-        std::cerr << "Failed to create face_detector neural network." << std::endl;
+        std::cerr << "Failed to create YUNET face_detector neural network." << std::endl;
         return -1;
     } else if (!graphSface) {
         std::cerr << "Failed to create SFace neural network." << std::endl;
@@ -610,18 +891,19 @@ int32_t init_neural_networks() {
     statusAntiSpf = vnn_VerifyGraph(graphAntiSpf);
 #endif
     if (statusFaceDetect != VSI_SUCCESS) {
-        std::cerr << "Graph (FaceDetect) verification failed." << std::endl;
-        vnn_ReleaseNeuralNetworkFacedetector3Uint8(graphFaceDetect);
+        std::cerr << "Graph (YUNET FaceDetect) verification failed." << std::endl;
+        // OLD: vnn_ReleaseNeuralNetworkFacedetector3Uint8(graphFaceDetect);
+        vnn_ReleaseNeuralNetworkYunet(graphFaceDetect);
         return -1;
     } else if (statusSface != VSI_SUCCESS) {
         std::cerr << "Graph (SFace) verification failed." << std::endl;
-        vnn_ReleaseNeuralNetworkSface(statusSface);
+        vnn_ReleaseNeuralNetworkSface(graphSface);
         return -1;
     } 
 #if ANTI_SPOOFING    
     else if (statusAntiSpf != VSI_SUCCESS) {
         std::cerr << "Graph (AntiSpoof) verification failed." << std::endl;
-        vnn_ReleaseNeuralNetworkAntiSpoof(statusAntiSpf);
+        vnn_ReleaseNeuralNetworkAntiSpoof(graphAntiSpf);
         return -1;
     }
 #endif
@@ -682,107 +964,197 @@ cv::Mat resizeKeepAspectRatio(const cv::Mat &input, const cv::Size &dstSize, con
 
 #endif
 std::tuple<uint8_t, std::vector<float>> register_user(cv::Mat img) {
+    std::cout << "\n[C++ REG DEBUG] ==> Entered register_user function." << std::endl;
     vsi_status status = VSI_FAILURE;
     std::vector<float> facial_feature = {};
 
     if (img.empty()) {
-        std::cout << "Failed to read frame from camera." << std::endl;
-        return std::make_tuple(statusFaceDetect, facial_feature);
+        std::cerr << "[C++ REG DEBUG]   ERROR: Input cv::Mat image is empty. Aborting." << std::endl;
+        return std::make_tuple(VSI_FAILURE, facial_feature);
     }
+    std::cout << "[C++ REG DEBUG]   Input image is valid (not empty)." << std::endl;
 
-    // float x_scale = float(img.cols) / float(IMAGE_WIDTH);
-    // float y_scale = float(img.rows) / float(IMAGE_HEIGHT);
-    // std::cout << x_scale << std::endl;
-    // std::cout << y_scale << std::endl;
-
-    // cv::resize(img, img, cv::Size(IMAGE_WIDTH, IMAGE_HEIGHT));
-    cv::Size dstSize(IMAGE_WIDTH, IMAGE_HEIGHT);
+    // Yunet expects 640x640 input
+    const int YUNET_INPUT_WIDTH = 640;
+    const int YUNET_INPUT_HEIGHT = 640;
     cv::Scalar paddingColor(0, 0, 0); // Black padding color (BGR)
-    img = resizeKeepAspectRatio(img, dstSize, paddingColor);
-    cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
     
-    // uint8_t* pRgb = new uint8_t[img.rows * img.cols * 3];
-    // Mat_to_array(img, pRgb);
-    uint8_t *img_buffer = NULL;
-    // uint32_t *img_buffer_size = 0;
+    std::cout << "[C++ REG DEBUG]   Resizing input image to " << YUNET_INPUT_WIDTH << "x" << YUNET_INPUT_HEIGHT << " with padding." << std::endl;
+    cv::Mat yunet_input = resizeKeepAspectRatio(img, cv::Size(YUNET_INPUT_WIDTH, YUNET_INPUT_HEIGHT), paddingColor);
     
-    // img_buffer = pre_process_get_buffer_from_mat(img, img_buffer_size);
-    if (img.isContinuous())
-        img_buffer = img.data;
-
-    //mod ted for recongnition and register image command, 20241115
-    //status = vnn_PreProcessNeuralNetwork(graph, argc, argv, pRgb);
-    statusFaceDetect = vnn_PreProcessNeuralNetwork(graphFaceDetect, 1, img_buffer);
-
-// #if 1
-    if (statusFaceDetect != VSI_SUCCESS) {
-        std::cerr << "Pre-processing failed." << std::endl;
-        // delete[] pRgb;
-        return std::make_tuple(statusFaceDetect, facial_feature);
+    // --- Full Preprocessing Pipeline ---
+    std::cout << "[C++ REG DEBUG]   Starting full preprocessing pipeline for Yunet." << std::endl;
+    vsi_nn_tensor_t *tensor = vsi_nn_GetTensor( graphFaceDetect, graphFaceDetect->input.tensors[0] );
+    if (tensor == nullptr) {
+        std::cerr << "[C++ REG DEBUG]   ERROR: Failed to get input tensor for Yunet graph. Aborting." << std::endl;
+        return std::make_tuple(VSI_FAILURE, facial_feature);
     }
 
+    _load_input_meta_yunet(); // Ensure metadata is loaded
+
+    // 1. Convert cv::Mat (BGR uint8) to float*
+    float *fdata = _imageData_to_float32(yunet_input.data, tensor);
+    if (fdata == nullptr) {
+        std::cerr << "[C++ REG DEBUG]   ERROR: Failed to convert image data to float32. Aborting." << std::endl;
+        return std::make_tuple(VSI_FAILURE, facial_feature);
+    }
+
+    // 2. Apply preprocessing steps (reorder, mean, scale)
+    for(int i = 0; i < VNN_PREPRO_NUM; i++) // VNN_PREPRO_NUM is 3
+    {
+        switch (input_meta_tab_yunet[0].image.preprocess[i])
+        {
+        case VNN_PREPRO_REORDER:
+            _data_transform(fdata, &input_meta_tab_yunet[0], tensor);
+            break;
+        case VNN_PREPRO_MEAN:
+            _data_mean(fdata, &input_meta_tab_yunet[0], tensor);
+            break;
+        case VNN_PREPRO_SCALE:
+            _data_scale(fdata, &input_meta_tab_yunet[0], tensor);
+            break;
+        default:
+            break;
+        }
+    }
+
+    // 3. Convert processed float* data to target dtype (uint8_t*)
+    uint8_t *processed_img_buffer = _float32_to_dtype(fdata, tensor);
+    if (processed_img_buffer == nullptr) {
+        std::cerr << "[C++ REG DEBUG]   ERROR: Failed to convert float32 data to target dtype. Aborting." << std::endl;
+        free(fdata); // Clean up float data
+        return std::make_tuple(VSI_FAILURE, facial_feature);
+    }
+    free(fdata); // Clean up float data
+
+    // YUNET PREPROCESSING (now just copies the fully preprocessed buffer)
+    std::cout << "[C++ REG DEBUG]   Calling vnn_PreProcessYunet..." << std::endl;
+    statusFaceDetect = vnn_PreProcessYunet(graphFaceDetect, 1, processed_img_buffer);
+
+    if (processed_img_buffer) free(processed_img_buffer); // Clean up processed buffer
+    // --- End Full Preprocessing Pipeline ---
+
+    if (statusFaceDetect != VSI_SUCCESS) {
+        std::cerr << "[C++ REG DEBUG]   ERROR: vnn_PreProcessYunet failed with status " << statusFaceDetect << ". Aborting." << std::endl;
+        return std::make_tuple(statusFaceDetect, facial_feature);
+    }
+    std::cout << "[C++ REG DEBUG]   vnn_PreProcessYunet successful." << std::endl;
+
+    std::cout << "[C++ REG DEBUG]   Calling vnn_ProcessGraph for face detection..." << std::endl;
     statusFaceDetect = vnn_ProcessGraph(graphFaceDetect);       
     if (statusFaceDetect != VSI_SUCCESS) {
-        std::cerr << "Graph processing failed." << std::endl;
-        // delete[] pRgb;
+        std::cerr << "[C++ REG DEBUG]   ERROR: vnn_ProcessGraph failed with status " << statusFaceDetect << ". Aborting." << std::endl;
         return std::make_tuple(statusFaceDetect, facial_feature);
     }
+    std::cout << "[C++ REG DEBUG]   vnn_ProcessGraph successful." << std::endl;
 
-    std::vector<FaceObject> faces;        
-    statusFaceDetect = vnn_PostProcessNeuralNetworkFaceDetector3Uint8(graphFaceDetect, faces);       
+    // YUNET POSTPROCESSING - extracts faces with landmarks
+    std::vector<YunetFaceObject> faces;        
+    std::cout << "[C++ REG DEBUG]   Calling vnn_PostProcessNeuralNetworkYunet..." << std::endl;
+    statusFaceDetect = vnn_PostProcessNeuralNetworkYunet(graphFaceDetect, faces, YUNET_INPUT_WIDTH, YUNET_INPUT_HEIGHT);       
     if (statusFaceDetect != VSI_SUCCESS) {
-        std::cerr << "Post-processing failed." << std::endl;
-        // delete[] pRgb;
+        std::cerr << "[C++ REG DEBUG]   ERROR: vnn_PostProcessNeuralNetworkYunet failed with status " << statusFaceDetect << ". Aborting." << std::endl;
         return std::make_tuple(statusFaceDetect, facial_feature);
     }
+    std::cout << "[C++ REG DEBUG]   vnn_PostProcessNeuralNetworkYunet successful." << std::endl;
 
-    std::cout << __FUNCTION__ << "():" << __LINE__ << std::endl;
-    printf("The number of faces: %ld\n", faces.size());
+    printf("[C++ REG DEBUG]   Number of faces detected: %ld\n", faces.size());
+    
     if (faces.size() == 1) {
+        std::cout << "[C++ REG DEBUG]   Exactly one face found. Proceeding with feature extraction." << std::endl;
         auto& face = faces[0];
-        int x1, y1, x2, y2;
-        x1 = std::max(0, std::min(face.rect.x, img.cols - 1));
-        y1 = std::max(0, std::min(face.rect.y, img.rows - 1));
-        x2 = std::max(0, std::min(face.rect.width, img.cols - 1));
-        y2 = std::max(0, std::min(face.rect.height, img.rows - 1));
-        int w = x2 - x1;
-        int h = y2 - y1;
-        cv::Rect b_box(x1, y1, w, h);
-        cv::Mat detected_faces[1];
-        detected_faces[0] = img(b_box);
-#if 0
-        char saved_face[128];
-        // sprintf(saved_face, "detected_face_%d.jpg", i);
-        sprintf(saved_face, "detected_face_.jpg");
-        if (!detected_faces[0].empty()) {
-            cv::imwrite(saved_face, detected_faces[0]);
-        }
-#endif
-#if 0
-        // cv::Mat face_image = faces.row(0);
-        cv::Mat face_image = detected_faces[0];
-        cv::Mat target_aligned;
-        alignCrop(img, face_image, target_aligned);
-        char aligned_face[128];
-        // sprintf(saved_face, "detected_face_%d.jpg", i);
-        sprintf(aligned_face, "aligned_face.jpg");
-        if (!target_aligned.empty()) {
-            cv::imwrite(aligned_face, target_aligned);
-        }
-#endif
-        detected_faces[0] = resizeKeepAspectRatio(detected_faces[0], cv::Size(112, 112), paddingColor);
+        
+        // --- CORRECT SCALING LOGIC ---
+        // 1. Recalculate the scale and padding used during resizeKeepAspectRatio
+        double h_scale_inv = (double)YUNET_INPUT_HEIGHT / img.rows;
+        double w_scale_inv = (double)YUNET_INPUT_WIDTH / img.cols;
+        double scale_inv = std::min(h_scale_inv, w_scale_inv);
 
-        facial_feature = extractFeatures(detected_faces[0]);
-        // std::cout << "facial_feature.size(): " << facial_feature.size() << std::endl;
+        int new_scaled_rows = static_cast<int>(img.rows * scale_inv);
+        int new_scaled_cols = static_cast<int>(img.cols * scale_inv);
+
+        int pad_top = (YUNET_INPUT_HEIGHT - new_scaled_rows) / 2;
+        int pad_left = (YUNET_INPUT_WIDTH - new_scaled_cols) / 2;
+
+        // 2. Convert landmarks back to original image space
+        float src_landmarks[5][2];
+        for (int i = 0; i < 5; ++i) {
+            src_landmarks[i][0] = (face.landmarks[2*i] - pad_left) / scale_inv;
+            src_landmarks[i][1] = (face.landmarks[2*i + 1] - pad_top) / scale_inv;
+        }
+        
+        printf("[C++ REG DEBUG]   Scaled landmarks: RE(%.1f,%.1f) LE(%.1f,%.1f) N(%.1f,%.1f) RM(%.1f,%.1f) LM(%.1f,%.1f)\n",
+               src_landmarks[0][0], src_landmarks[0][1],
+               src_landmarks[1][0], src_landmarks[1][1],
+               src_landmarks[2][0], src_landmarks[2][1],
+               src_landmarks[3][0], src_landmarks[3][1],
+               src_landmarks[4][0], src_landmarks[4][1]);
+        
+        // 💾 Debug: Draw bbox and landmarks
+        {
+            cv::Mat debug_img = img.clone();
+            
+            // Calculate bbox in original image space
+            int x1 = (int)((face.rect.x - pad_left) / scale_inv);
+            int y1 = (int)((face.rect.y - pad_top) / scale_inv);
+            int w = (int)(face.rect.width / scale_inv);
+            int h = (int)(face.rect.height / scale_inv);
+            
+            cv::rectangle(debug_img, cv::Rect(x1, y1, w, h), cv::Scalar(0, 255, 0), 2);
+            
+            for (int i = 0; i < 5; ++i) {
+                cv::circle(debug_img, cv::Point((int)src_landmarks[i][0], (int)src_landmarks[i][1]), 2, cv::Scalar(0, 0, 255), -1);
+            }
+            
+            char debug_path[256];
+            time_t now = time(0);
+            struct tm* tm_info = localtime(&now);
+            strftime(debug_path, sizeof(debug_path), "debug_register_bbox_%Y%m%d_%H%M%S.jpg", tm_info);
+            cv::imwrite(debug_path, debug_img);
+            printf("[C++ REG DEBUG]   💾 Saved debug image with bbox/landmarks: %s\n", debug_path);
+        }
+
+        std::cout << "[C++ REG DEBUG]   Performing alignCrop..." << std::endl;
+        cv::Mat aligned_face;
+        // Fix: Create 1x15 matrix to match alignCrop expectation (starts reading at index 4)
+        cv::Mat face_mat = cv::Mat::zeros(1, 15, CV_32FC1);
+        for (int i = 0; i < 5; i++) {
+            face_mat.at<float>(0, 4 + 2 * i) = src_landmarks[i][0];
+            face_mat.at<float>(0, 4 + 2 * i + 1) = src_landmarks[i][1];
+        }
+        
+        alignCrop(img, face_mat, aligned_face);
+        
+        // 💾 Debug: Save aligned face
+        char aligned_face_path[256];
+        time_t now = time(0);
+        struct tm* tm_info = localtime(&now);
+        strftime(aligned_face_path, sizeof(aligned_face_path), "debug_register_aligned_%Y%m%d_%H%M%S.jpg", tm_info);
+        if (!aligned_face.empty()) {
+            cv::imwrite(aligned_face_path, aligned_face);
+            printf("[C++ REG DEBUG]   💾 Saved aligned face (112x112) [INPUT TO SFACE] to: %s\n", aligned_face_path);
+        } else {
+            std::cerr << "[C++ REG DEBUG]   WARNING: aligned_face is empty after alignCrop." << std::endl;
+        }
+
+        std::cout << "[C++ REG DEBUG]   Calling extractFeatures..." << std::endl;
+        facial_feature = extractFeatures(aligned_face);
+        printf("[C++ REG DEBUG]   <== extractFeatures finished. Extracted feature vector size: %ld\n", facial_feature.size());
+        
+        if (facial_feature.size() == 128) {
+            std::cout << "[C++ REG DEBUG]   SUCCESS: Feature extraction successful. Returning features." << std::endl;
+        } else {
+            std::cerr << "[C++ REG DEBUG]   ERROR: Feature extraction failed. Vector size is not 128. Returning empty." << std::endl;
+            // Ensure we return a failure status if feature extraction fails
+            statusFaceDetect = VSI_FAILURE;
+        }
         return std::make_tuple(statusFaceDetect, facial_feature);
     }
     else
     {
-        std::cerr << "Please capture only ONE person." << std::endl;
+        std::cerr << "[C++ REG DEBUG]   ERROR: Expected 1 face, but detected " << faces.size() << ". Aborting." << std::endl;
         return std::make_tuple(VSI_FAILURE, facial_feature);
     }
-
-    // return std::make_tuple(statusFaceDetect, facial_feature);
 }
 std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> detect_face(cv::Mat img) {
 
@@ -804,131 +1176,218 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
         return empty_result;
     }
 
-    // float x_scale = float(img.cols) / float(IMAGE_WIDTH);
-    // float y_scale = float(img.rows) / float(IMAGE_HEIGHT);
-    // std::cout << x_scale << std::endl;
-    // std::cout << y_scale << std::endl;
-
-    // cv::resize(img, img, cv::Size(IMAGE_WIDTH, IMAGE_HEIGHT));
-    // cv::Size dstSize(IMAGE_WIDTH, IMAGE_HEIGHT);
+    // Yunet expects 640x640 input
+    const int YUNET_INPUT_WIDTH = 640;
+    const int YUNET_INPUT_HEIGHT = 640;
     cv::Scalar paddingColor(0, 0, 0); // Black padding color (BGR)
-    // img = resizeKeepAspectRatio(img, dstSize, paddingColor);
-    cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
-
-    // uint8_t* pRgb = new uint8_t[img.rows * img.cols * 3];
-    // Mat_to_array(img, pRgb);
-    uint8_t *img_buffer = NULL;
-    // uint32_t *img_buffer_size = 0;
     
-    // img_buffer = pre_process_get_buffer_from_mat(img, img_buffer_size);
-    if (img.isContinuous())
-        img_buffer = img.data;
+    // Resize image to 640x640 keeping aspect ratio for Yunet
+    cv::Mat yunet_input = resizeKeepAspectRatio(img, cv::Size(YUNET_INPUT_WIDTH, YUNET_INPUT_HEIGHT), paddingColor);
+    
+    // --- Full Preprocessing Pipeline ---
+    vsi_nn_tensor_t *tensor = vsi_nn_GetTensor( graphFaceDetect, graphFaceDetect->input.tensors[0] );
+    if (tensor == nullptr) {
+        std::cerr << "[ERROR] detect_face: Failed to get input tensor for Yunet graph.\n";
+        return empty_result;
+    }
 
-    //mod ted for recongnition and register image command, 20241115
-    //status = vnn_PreProcessNeuralNetwork(graph, argc, argv, pRgb);
-    statusFaceDetect = vnn_PreProcessNeuralNetwork(graphFaceDetect, 1, img_buffer);
+    _load_input_meta_yunet(); // Ensure metadata is loaded
+
+    // 1. Convert cv::Mat (BGR uint8) to float*
+    float *fdata = _imageData_to_float32(yunet_input.data, tensor);
+    if (fdata == nullptr) {
+        std::cerr << "[ERROR] detect_face: Failed to convert image data to float32.\n";
+        return empty_result;
+    }
+
+    // 2. Apply preprocessing steps (reorder, mean, scale)
+    for(int i = 0; i < VNN_PREPRO_NUM; i++) // VNN_PREPRO_NUM is 3
+    {
+        switch (input_meta_tab_yunet[0].image.preprocess[i])
+        {
+        case VNN_PREPRO_REORDER:
+            _data_transform(fdata, &input_meta_tab_yunet[0], tensor);
+            break;
+        case VNN_PREPRO_MEAN:
+            _data_mean(fdata, &input_meta_tab_yunet[0], tensor);
+            break;
+        case VNN_PREPRO_SCALE:
+            _data_scale(fdata, &input_meta_tab_yunet[0], tensor);
+            break;
+        default:
+            break;
+        }
+    }
+
+    // 3. Convert processed float* data to target dtype (uint8_t*)
+    uint8_t *processed_img_buffer = _float32_to_dtype(fdata, tensor);
+    if (processed_img_buffer == nullptr) {
+        std::cerr << "[ERROR] detect_face: Failed to convert float32 data to target dtype.\n";
+        free(fdata); // Clean up float data
+        return empty_result;
+    }
+    free(fdata); // Clean up float data
+
+    // YUNET PREPROCESSING (now just copies the fully preprocessed buffer)
+    statusFaceDetect = vnn_PreProcessYunet(graphFaceDetect, 1, processed_img_buffer);
+
+    if (processed_img_buffer) free(processed_img_buffer); // Clean up processed buffer
+    // --- End Full Preprocessing Pipeline ---
 
     if (statusFaceDetect != VSI_SUCCESS) {
-        std::cerr << "Pre-processing failed." << std::endl;
-        // delete[] pRgb;
+        std::cerr << "[YUNET] Pre-processing failed." << std::endl;
         return empty_result;
     }
 
     statusFaceDetect = vnn_ProcessGraph(graphFaceDetect);       
     if (statusFaceDetect != VSI_SUCCESS) {
-        std::cerr << "Graph processing failed." << std::endl;
-        // delete[] pRgb;
+        std::cerr << "[YUNET] Graph processing failed." << std::endl;
         return empty_result;
     }
 
-    std::vector<FaceObject> faces;        
-    statusFaceDetect = vnn_PostProcessNeuralNetworkFaceDetector3Uint8(graphFaceDetect, faces);       
+    // YUNET POSTPROCESSING - extracts faces with landmarks
+    std::vector<YunetFaceObject> faces;        
+    statusFaceDetect = vnn_PostProcessNeuralNetworkYunet(graphFaceDetect, faces, YUNET_INPUT_WIDTH, YUNET_INPUT_HEIGHT);       
     if (statusFaceDetect != VSI_SUCCESS) {
-        std::cerr << "Post-processing failed." << std::endl;
-        // delete[] pRgb;
+        std::cerr << "[YUNET] Post-processing failed." << std::endl;
         return empty_result;
     }
 
-#if 1
-    printf("The number of faces: %ld\n", faces.size());
+    printf("[YUNET] The number of faces detected: %ld\n", faces.size());
 
     if (faces.size() > 0) {
-        auto& face = faces[0];
+        auto& face = faces[0];  // Get first detected face
+        
+        // --- CORRECT SCALING LOGIC ---
+        // 1. Recalculate the scale and padding used during resizeKeepAspectRatio
+        double h_scale_inv = (double)YUNET_INPUT_HEIGHT / img.rows;
+        double w_scale_inv = (double)YUNET_INPUT_WIDTH / img.cols;
+        double scale_inv = std::min(h_scale_inv, w_scale_inv);
+
+        int new_scaled_rows = static_cast<int>(img.rows * scale_inv);
+        int new_scaled_cols = static_cast<int>(img.cols * scale_inv);
+
+        int pad_top = (YUNET_INPUT_HEIGHT - new_scaled_rows) / 2;
+        int pad_left = (YUNET_INPUT_WIDTH - new_scaled_cols) / 2;
+
+        // 2. Convert face coordinates from 640x640 space back to original image space
         uint16_t left, top, right, bottom;
-        uint16_t x1, y1, x2, y2;
+        left = (uint16_t)std::max(0.0, (face.rect.x - pad_left) / scale_inv);
+        top = (uint16_t)std::max(0.0, (face.rect.y - pad_top) / scale_inv);
+        right = (uint16_t)std::min((double)img.cols, ((face.rect.x + face.rect.width) - pad_left) / scale_inv);
+        bottom = (uint16_t)std::min((double)img.rows, ((face.rect.y + face.rect.height) - pad_top) / scale_inv);
 
-        x1 = left = std::max(0, std::min(face.rect.x, img.cols - 1));
-        y1 = top = std::max(0, std::min(face.rect.y, img.rows - 1));
-        x2 = right = std::max(0, std::min(face.rect.width, img.cols - 1));
-        y2 = bottom = std::max(0, std::min(face.rect.height, img.rows - 1));
+        // 3. Convert landmarks back to original image space
+        float src_landmarks[5][2];
+        for (int i = 0; i < 5; ++i) {
+            src_landmarks[i][0] = (face.landmarks[2*i] - pad_left) / scale_inv;
+            src_landmarks[i][1] = (face.landmarks[2*i + 1] - pad_top) / scale_inv;
+        }
+        
+        printf("[YUNET] Scaled landmarks: RE(%.1f,%.1f) LE(%.1f,%.1f) N(%.1f,%.1f) RM(%.1f,%.1f) LM(%.1f,%.1f)\n",
+               src_landmarks[0][0], src_landmarks[0][1],
+               src_landmarks[1][0], src_landmarks[1][1],
+               src_landmarks[2][0], src_landmarks[2][1],
+               src_landmarks[3][0], src_landmarks[3][1],
+               src_landmarks[4][0], src_landmarks[4][1]);
 
-        // return std::make_tuple(uint16_t(left * x_scale), uint16_t(top * y_scale), uint16_t(right * x_scale), uint16_t(bottom * y_scale), "ahihi");
+        // 💾 Debug: Draw bbox and landmarks
+        /*
+        {
+            cv::Mat debug_img = img.clone();
+            cv::rectangle(debug_img, cv::Point(left, top), cv::Point(right, bottom), cv::Scalar(0, 255, 0), 2);
+            
+            for (int i = 0; i < 5; ++i) {
+                cv::circle(debug_img, cv::Point((int)src_landmarks[i][0], (int)src_landmarks[i][1]), 2, cv::Scalar(0, 0, 255), -1);
+            }
+            
+            char debug_path[256];
+            time_t now = time(0);
+            struct tm* tm_info = localtime(&now);
+            strftime(debug_path, sizeof(debug_path), "debug_detect_bbox_%Y%m%d_%H%M%S.jpg", tm_info);
+            cv::imwrite(debug_path, debug_img);
+            printf("💾 [YUNET] Saved debug image with bbox/landmarks: %s\n", debug_path);
+        }
+        */
+
+        // ✅ USE ALIGNCROP WITH YUNET LANDMARKS for better face alignment
+        cv::Mat aligned_face;
+        // Fix: Create 1x15 matrix to match alignCrop expectation (starts reading at index 4)
+        cv::Mat face_mat = cv::Mat::zeros(1, 15, CV_32FC1);
+        for (int i = 0; i < 5; i++) {
+            face_mat.at<float>(0, 4 + 2 * i) = src_landmarks[i][0];
+            face_mat.at<float>(0, 4 + 2 * i + 1) = src_landmarks[i][1];
+        }
+        
+        alignCrop(img, face_mat, aligned_face);
+        
+        // Debug: Save aligned face
+        /*
+        char aligned_face_path[256];
+        time_t now = time(0);
+        struct tm* tm_info = localtime(&now);
+        strftime(aligned_face_path, sizeof(aligned_face_path), "debug_detect_aligned_%Y%m%d_%H%M%S.jpg", tm_info);
+        if (!aligned_face.empty()) {
+            cv::imwrite(aligned_face_path, aligned_face);
+            printf("💾 [YUNET] Saved aligned face [INPUT TO SFACE]: %s\n", aligned_face_path);
+        }
+        */
+
+        // Extract facial features from aligned face (112x112 - already done by alignCrop)
+        facial_feature = extractFeatures(aligned_face);
+        printf("[Sface] Extracted facial feature vector, size: %ld\n", facial_feature.size());
+        
+    #if ANTI_SPOOFING
+        // Use bounding box from original image for anti-spoofing
+        int x1 = std::max(0, std::min((int)left, img.cols - 1));
+        int y1 = std::max(0, std::min((int)top, img.rows - 1));
+        int x2 = std::max(0, std::min((int)right, img.cols - 1));
+        int y2 = std::max(0, std::min((int)bottom, img.rows - 1));
         int w = x2 - x1;
         int h = y2 - y1;
-        cv::Rect b_box(x1, y1, w, h);
-        cv::Mat detected_faces[1];
-        detected_faces[0] = img(b_box);
-        detected_faces[0] = resizeKeepAspectRatio(detected_faces[0], cv::Size(112, 112), paddingColor);
-
-        // detected_faces[0].convertTo(detected_faces[0], CV_32FC3, 1.0 / 255.0f);
-        // detected_faces[0] -= cv::Scalar(0.485, 0.456, 0.406);
-        // detected_faces[0] /= cv::Scalar(0.229, 0.224, 0.225);
-
-
-        facial_feature = extractFeatures(detected_faces[0]);
-        // std::cout << "facial_feature.size(): " << facial_feature.size() << std::endl;
-    #if ANTI_SPOOFING
-        cv::Mat anti_spf_input = img(b_box);
-        // cv::resize(anti_spf_input, anti_spf_input, cv::Size(128, 128), 0, 0, cv::INTER_CUBIC);
-        // cv::normalize(anti_spf_input, anti_spf_input, 1.0, 0.0, cv::NORM_MINMAX, CV_32FC3);
-        // cv::normalize(anti_spf_input, anti_spf_input, 0.0, 1.0, cv::NORM_MINMAX, CV_32FC3);
-        // anti_spf_input.convertTo(anti_spf_input, CV_32FC3, 1.0 / 255.0f, 0);
-
-        // printf("[%s()]::[%d] anti_spf_input.rows = %d\n", __FUNCTION__, __LINE__, anti_spf_input.rows);
-        // printf("[%s()]::[%d] anti_spf_input.cols = %d\n", __FUNCTION__, __LINE__, anti_spf_input.cols);
-        anti_spf_input = resizeKeepAspectRatio(anti_spf_input, cv::Size(128, 128), paddingColor);
-        anti_spf_input.convertTo(anti_spf_input, CV_32FC3, 1.0 / 255.0f);
-        // anti_spf_input -= cv::Scalar(0.485, 0.456, 0.406);
-        // anti_spf_input /= cv::Scalar(0.229, 0.224, 0.225);
-        cv::Scalar mean(0.485, 0.456, 0.406);
-        cv::Scalar std(0.229, 0.224, 0.225);
-        anti_spf_input = (anti_spf_input - mean) / std;
-        spoof_confidence = checkSpoofing(anti_spf_input);
-        // printf("[%s()]::[%d] spoof_confidence = %f\n", __FUNCTION__, __LINE__, spoof_confidence);
-
-        // ✅ FACE RECOGNITION & ACCESS LOGGING: Only if face is real
-        if (spoof_confidence > spoof_thresh && !facial_feature.empty()) {
-            printf("=== FACE RECOGNITION SEARCH ===\n");
-            // Note: Add face database search here if available
-            // For now, we'll use a dummy username for demonstration
-            std::string dummy_username = "TestUser_" + std::to_string(std::rand() % 100);
-            float dummy_similarity = 0.75f + (std::rand() % 25) / 100.0f;
+        
+        if (w > 0 && h > 0) {
+            cv::Rect b_box(x1, y1, w, h);
+            cv::Mat anti_spf_input = img(b_box);
             
-            printf("✅ FACE RECOGNIZED: %s (confidence: %.4f)\n", dummy_username.c_str(), dummy_similarity);
-            
-            // ✅ ACCESS LOGGING: Check if we should log this access
-            if (shouldLogAccess(dummy_username)) {
-                logAccess(dummy_username, dummy_similarity);
-                printf("📝 Access logged for user: %s\n", dummy_username.c_str());
-            } else {
-                printf("⏰ Access not logged (too soon since last access for %s)\n", dummy_username.c_str());
+            anti_spf_input = resizeKeepAspectRatio(anti_spf_input, cv::Size(128, 128), paddingColor);
+            anti_spf_input.convertTo(anti_spf_input, CV_32FC3, 1.0 / 255.0f);
+            cv::Scalar mean(0.485, 0.456, 0.406);
+            cv::Scalar std(0.229, 0.224, 0.225);
+            anti_spf_input = (anti_spf_input - mean) / std;
+            spoof_confidence = checkSpoofing(anti_spf_input);
+            printf("[YUNET] Anti-spoofing confidence: %f\n", spoof_confidence);
+
+            // ✅ FACE RECOGNITION & ACCESS LOGGING: Only if face is real
+            if (spoof_confidence > spoof_thresh && !facial_feature.empty()) {
+                printf("=== FACE RECOGNITION SEARCH ===\n");
+                // Note: Add face database search here if available
+                std::string dummy_username = "TestUser_" + std::to_string(std::rand() % 100);
+                float dummy_similarity = 0.75f + (std::rand() % 25) / 100.0f;
+                
+                printf("✅ FACE RECOGNIZED: %s (confidence: %.4f)\n", dummy_username.c_str(), dummy_similarity);
+                
+                // ✅ ACCESS LOGGING: Check if we should log this access
+                if (shouldLogAccess(dummy_username)) {
+                    logAccess(dummy_username, dummy_similarity);
+                    printf("📝 Access logged for user: %s\n", dummy_username.c_str());
+                } else {
+                    printf("⏰ Access not logged (too soon since last access for %s)\n", dummy_username.c_str());
+                }
+                printf("===============================\n");
             }
-            printf("===============================\n");
         }
-
-        return std::make_tuple(left, top, right, bottom, spoof_confidence, facial_feature);
+    #else
+        // No anti-spoofing, just return results
+        printf("[YUNET] No anti-spoofing enabled\n");
     #endif
         return std::make_tuple(left, top, right, bottom, spoof_confidence, facial_feature);
 
     } else {
-        std::cerr << "Please capture person FACE." << std::endl;
+        std::cerr << "[YUNET] Please capture person FACE." << std::endl;
         return empty_result;
     }
-
-#endif
-
 }
-#endif
 
 std::vector<float> extractFeatures(cv::Mat img) {
 
@@ -936,8 +1395,9 @@ std::vector<float> extractFeatures(cv::Mat img) {
     uint8_t *img_buffer = NULL;
     // uint32_t *img_buffer_size = 0;
     std::vector<float> feature;
-
     
+    //Thử nghiệm cải thiện độ chính xác bằng cách chuyển BGR sang RGB
+    //cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
     // img_buffer = pre_process_get_buffer_from_mat(img, img_buffer_size);
     if (img.isContinuous())
         img_buffer = img.data;
@@ -945,7 +1405,8 @@ std::vector<float> extractFeatures(cv::Mat img) {
     /* Pre process the image data */
     // uint32_t input_num = 1;
     // printf("[%s()]::[%d] graphSface->input.num = %d\n", __FUNCTION__, __LINE__, graphSface->input.num);
-    status = vnn_PreProcessNeuralNetwork( graphSface, 1, img_buffer );
+    //status = vnn_PreProcessNeuralNetwork( graphSface, 1, img_buffer );
+    status = vnn_PreProcess( graphSface, 1, img_buffer );
     TEST_CHECK_STATUS( status, final );
 
     /* Process graph */

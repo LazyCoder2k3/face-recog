@@ -42,5 +42,3 @@ include_directories(${OpenCV_INCLUDE_DIRS}/opencv2)
 
 
 target_link_libraries(face_recognition_pybind PRIVATE ${ROOT_DIR}/models/FaceRecognition_sface_pybind/libFaceRecog_wrapper.so)
-
-

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="I:\AnhTu\VNEMEX\face-recog\FaceRecognition_sface_pybind\build\CMakeFiles\d1aeb042979734d3b256a29e05bf2703\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{75B1A8C2-99CF-377B-B0F7-2B3C722D0C55}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
