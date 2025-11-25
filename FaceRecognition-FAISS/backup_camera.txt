@@ -20,15 +20,7 @@ class ThreadedCamera:
 
     def update(self):
         while self.running:
-            # Check running flag at the start of each iteration
-            if not self.running:
-                break
-                
             if self.cap is None or not self.cap.isOpened():
-                # Check running flag before attempting reconnection
-                if not self.running:
-                    break
-                    
                 self.status = "Connecting"
                 try:
                     # Attempt to connect
@@ -73,15 +65,7 @@ class ThreadedCamera:
                 time.sleep(1)
             
             # Small sleep to prevent CPU hogging if loop is tight
-            time.sleep(0.005)
-        
-        # Cleanup when exiting loop
-        print("🛑 Camera: Thread stopping, releasing resources...")
-        if self.cap:
-            self.cap.release()
-            self.cap = None
-        self.status = "Disconnected"
-        print("✅ Camera: Resources released") 
+            time.sleep(0.005) 
 
     def get_frame(self):
         with self.lock:
@@ -91,13 +75,8 @@ class ThreadedCamera:
         return self.status
 
     def stop(self):
-        print("🛑 Camera: Stopping...")
         self.running = False
-        if self.thread and self.thread.is_alive():
-            self.thread.join(timeout=2.0)
+        if self.thread:
+            self.thread.join(timeout=1.0)
         if self.cap:
             self.cap.release()
-            self.cap = None
-        self.status = "Disconnected"
-        self.frame = None
-        print("✅ Camera: Stopped successfully")

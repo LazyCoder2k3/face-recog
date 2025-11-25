@@ -69,9 +69,9 @@ extern "C" {
 /*-------------------------------------------
     Frame Processing & Access Control
 -------------------------------------------*/
-// Frame skip control - process every 4th frame instead of every 2nd frame
-static int frame_counter = 0;
-#define FRAME_SKIP_INTERVAL 4  // Changed from 2 to 4
+// Frame skip control - DISABLED: Frame skipping now controlled by Python layer
+// static int frame_counter = 0;
+// #define FRAME_SKIP_INTERVAL 4  // Changed from 2 to 4
 
 // Access time tracking - minimum 5 minutes between access logs
 static std::map<std::string, time_t> last_access_times;
@@ -339,7 +339,8 @@ void logAccess(const std::string& username, float similarity) {
     }
 }
 
-// Check frame skip - only process every FRAME_SKIP_INTERVAL frames
+// Check frame skip - DISABLED: Frame skipping now controlled by Python layer
+/*
 bool shouldProcessFrame() {
     frame_counter++;
     if (frame_counter >= FRAME_SKIP_INTERVAL) {
@@ -348,6 +349,7 @@ bool shouldProcessFrame() {
     }
     return false;
 }
+*/
 /*-------------------------------------------
                   Functions
 -------------------------------------------*/
@@ -1158,21 +1160,22 @@ std::tuple<uint8_t, std::vector<float>> register_user(cv::Mat img) {
 }
 std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> detect_face(cv::Mat img) {
 
+    // Static variable to store last successful detection result
+    static std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> last_result = {0, 0, 0, 0, -1, {}};
+    
     std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> empty_result = {0, 0, 0, 0, -1, {}};
     std::vector<float> facial_feature = {};
     float spoof_thresh = 0.4;
     float spoof_confidence = 1;
 
-    // Frame skip check - only process every 4th frame
-    if (!shouldProcessFrame()) {
-        printf("⏭️  Skipping frame %d (processing every %d frames)\n", frame_counter, FRAME_SKIP_INTERVAL);
-        return empty_result;
-    }
+    // Frame skipping is controlled by Python layer - C++ processes all frames sent to it
     
-    printf("🎯 Processing frame %d\n", frame_counter);
+    // ⏱️ Start total timing
+    uint64_t total_start = get_perf_count();
 
     if (img.empty()) {
         std::cout << "Failed to read frame from camera." << std::endl;
+        last_result = empty_result;
         return empty_result;
     }
 
@@ -1184,10 +1187,14 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     // Resize image to 640x640 keeping aspect ratio for Yunet
     cv::Mat yunet_input = resizeKeepAspectRatio(img, cv::Size(YUNET_INPUT_WIDTH, YUNET_INPUT_HEIGHT), paddingColor);
     
+    // ⏱️ Start Yunet timing
+    //uint64_t yunet_start = get_perf_count();
+    
     // --- Full Preprocessing Pipeline ---
     vsi_nn_tensor_t *tensor = vsi_nn_GetTensor( graphFaceDetect, graphFaceDetect->input.tensors[0] );
     if (tensor == nullptr) {
         std::cerr << "[ERROR] detect_face: Failed to get input tensor for Yunet graph.\n";
+        last_result = empty_result;
         return empty_result;
     }
 
@@ -1197,6 +1204,7 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     float *fdata = _imageData_to_float32(yunet_input.data, tensor);
     if (fdata == nullptr) {
         std::cerr << "[ERROR] detect_face: Failed to convert image data to float32.\n";
+        last_result = empty_result;
         return empty_result;
     }
 
@@ -1224,6 +1232,7 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     if (processed_img_buffer == nullptr) {
         std::cerr << "[ERROR] detect_face: Failed to convert float32 data to target dtype.\n";
         free(fdata); // Clean up float data
+        last_result = empty_result;
         return empty_result;
     }
     free(fdata); // Clean up float data
@@ -1236,12 +1245,15 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
 
     if (statusFaceDetect != VSI_SUCCESS) {
         std::cerr << "[YUNET] Pre-processing failed." << std::endl;
+        last_result = empty_result;
         return empty_result;
     }
-
+    // ⏱️ Only calculating Yunet timing for inference
+    uint64_t yunet_start = get_perf_count();
     statusFaceDetect = vnn_ProcessGraph(graphFaceDetect);       
     if (statusFaceDetect != VSI_SUCCESS) {
         std::cerr << "[YUNET] Graph processing failed." << std::endl;
+        last_result = empty_result;
         return empty_result;
     }
 
@@ -1250,8 +1262,14 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     statusFaceDetect = vnn_PostProcessNeuralNetworkYunet(graphFaceDetect, faces, YUNET_INPUT_WIDTH, YUNET_INPUT_HEIGHT);       
     if (statusFaceDetect != VSI_SUCCESS) {
         std::cerr << "[YUNET] Post-processing failed." << std::endl;
+        last_result = empty_result;
         return empty_result;
     }
+
+    // ⏱️ End Yunet timing and print result
+    uint64_t yunet_end = get_perf_count();
+    float yunet_time_ms = (yunet_end - yunet_start) / 1000000.0f;
+    printf("⏱️  [YUNET Detection] Time: %.2f ms\n", yunet_time_ms);
 
     printf("[YUNET] The number of faces detected: %ld\n", faces.size());
 
@@ -1319,6 +1337,9 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
             face_mat.at<float>(0, 4 + 2 * i + 1) = src_landmarks[i][1];
         }
         
+        // ⏱️ Start Sface timing
+        uint64_t sface_start = get_perf_count();
+        
         alignCrop(img, face_mat, aligned_face);
         
         // Debug: Save aligned face
@@ -1335,6 +1356,12 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
 
         // Extract facial features from aligned face (112x112 - already done by alignCrop)
         facial_feature = extractFeatures(aligned_face);
+        
+        // ⏱️ End Sface timing and print result
+        uint64_t sface_end = get_perf_count();
+        float sface_time_ms = (sface_end - sface_start) / 1000000.0f;
+        printf("⏱️  [SFACE Feature Extraction] Time: %.2f ms\n", sface_time_ms);
+        
         printf("[Sface] Extracted facial feature vector, size: %ld\n", facial_feature.size());
         
     #if ANTI_SPOOFING
@@ -1381,10 +1408,22 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
         // No anti-spoofing, just return results
         printf("[YUNET] No anti-spoofing enabled\n");
     #endif
-        return std::make_tuple(left, top, right, bottom, spoof_confidence, facial_feature);
+        
+        // ⏱️ End total timing and print result
+        uint64_t total_end = get_perf_count();
+        float total_time_ms = (total_end - total_start) / 1000000.0f;
+        printf("⏱️  [TOTAL Processing] Time: %.2f ms\n", total_time_ms);
+        printf("=====================================\n");
+        
+        // Update last_result for smooth UI on skipped frames
+        last_result = std::make_tuple(left, top, right, bottom, spoof_confidence, facial_feature);
+        
+        return last_result;
 
     } else {
+        // No face detected - clear last_result to avoid showing stale bbox
         std::cerr << "[YUNET] Please capture person FACE." << std::endl;
+        last_result = empty_result;
         return empty_result;
     }
 }

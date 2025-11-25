@@ -8,6 +8,7 @@ import numpy as np
 import face_recognition_pybind as FR
 import faiss
 import time
+from functools import partial # Dùng để wrap hàm
 
 class WebSocketClient:
     def __init__(self, uri, status_queue, user_management, faiss_index):
@@ -19,47 +20,113 @@ class WebSocketClient:
         self._loop = None
         self._ws = None
         self._main_task = None
+        self._running = False # Biến kiểm soát vòng lặp chính
+        self._send_queue = None # Queue sẽ được khởi tạo trong loop
 
     def start(self):
-        self._thread = threading.Thread(target=self._thread_target, daemon=True)
-        self._thread.start()
+        if not self._running:
+            self._running = True
+            self._thread = threading.Thread(target=self._thread_target, daemon=True)
+            self._thread.start()
 
     def stop(self):
-        if self._main_task and self._loop:
+        self._running = False
+        if self._loop:
             self._loop.call_soon_threadsafe(self._main_task.cancel)
         if self._thread:
-            self._thread.join()
+            self._thread.join(timeout=2.0)
+
+    def send_recognize_message(self, deviceId, faceId):
+        """Public method to queue a recognize message"""
+        if self._loop and self._running:
+            asyncio.run_coroutine_threadsafe(self._enqueue_recognize(deviceId, faceId), self._loop)
+
+    async def _enqueue_recognize(self, deviceId, faceId):
+        msg = {
+            "TOPIC": "VMXSys/VAIPLF2CtrlBox/accesscontrol",
+            "PAYLOAD": {
+                "action": "recognize",
+                "deviceId": deviceId,
+                "faceId": faceId
+            }
+        }
+        await self._send_queue.put(json.dumps(msg))
 
     def _thread_target(self):
         self._loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self._loop)
+        self._send_queue = asyncio.Queue()
         try:
             self._main_task = self._loop.create_task(self._connect_and_listen())
             self._loop.run_until_complete(self._main_task)
         except asyncio.CancelledError:
             pass
         finally:
-            all_tasks = asyncio.all_tasks(loop=self._loop)
-            group = asyncio.gather(*all_tasks, return_exceptions=True)
-            self._loop.run_until_complete(group)
-            self._loop.close()
+            try:
+                # Cleanup tasks
+                pending = asyncio.all_tasks(self._loop)
+                for task in pending:
+                    task.cancel()
+                self._loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+                self._loop.close()
+            except Exception as e:
+                print(f"DEBUG WS: Cleanup error: {e}")
 
     async def _connect_and_listen(self):
-        self._status_queue.put("Connecting...")
-        print("DEBUG: Attempting WebSocket connection...")
+        while self._running: # Vòng lặp reconnect tự động
+            self._status_queue.put("Connecting...")
+            print("DEBUG: Attempting WebSocket connection...")
 
+            try:
+                # CẤU HÌNH PING/PONG: Nới lỏng để tránh disconnect
+                async with websockets.connect(
+                    self._uri, 
+                    ping_interval=30, 
+                    ping_timeout=60,
+                    close_timeout=10
+                ) as websocket:
+                    self._ws = websocket
+                    self._status_queue.put("Connect successfully")
+                    print("DEBUG: WebSocket connected successfully.")
+                    
+                    # Chạy song song 2 task: Nhận và Gửi
+                    receive_task = asyncio.create_task(self._receive_loop(websocket))
+                    send_task = asyncio.create_task(self._send_loop(websocket))
+                    
+                    done, pending = await asyncio.wait(
+                        [receive_task, send_task],
+                        return_when=asyncio.FIRST_COMPLETED
+                    )
+                    
+                    for task in pending:
+                        task.cancel()
+
+            except (OSError, asyncio.TimeoutError, websockets.exceptions.WebSocketException) as e:
+                self._status_queue.put(f"Connection failed: {e}")
+                print(f"DEBUG: Connection failed/dropped: {e}")
+            
+            # Chờ 5 giây trước khi reconnect để tránh spam server
+            if self._running:
+                await asyncio.sleep(5)
+
+    async def _receive_loop(self, websocket):
         try:
-            async with websockets.connect(self._uri) as websocket:
-                self._ws = websocket
-                self._status_queue.put("Connect successfully")
-                print("DEBUG: WebSocket connected successfully.")
-                async for message in websocket:
-                    print(f"DEBUG: Received message from WebSocket: {message}")
-                    self._status_queue.put(f"Received message: {message[:100]}...")
-                    await self._handle_message(message)
+            async for message in websocket:
+                await self._handle_message(message)
+        except websockets.exceptions.ConnectionClosed as e:
+            print(f"DEBUG: Connection closed in receive loop: {e}")
+            self._status_queue.put("Disconnected. Reconnecting...")
+            raise e
+
+    async def _send_loop(self, websocket):
+        try:
+            while True:
+                message = await self._send_queue.get()
+                await websocket.send(message)
+                self._send_queue.task_done()
         except Exception as e:
-            self._status_queue.put(f"Connection failed: {e}")
-            print(f"DEBUG: WebSocket connection failed: {e}")
+            print(f"DEBUG: Error in send loop: {e}")
+            raise e
 
     async def _handle_message(self, message):
         try:
@@ -71,204 +138,136 @@ class WebSocketClient:
             if topic == "VMXSys/VMXSLSMobile/face" and action == "register":
                 username = payload.get("username")
                 face_urls = payload.get("face_urls")
-                request_id = payload.get("request_id")
 
                 if username and face_urls:
                     self._status_queue.put(f"Registering user '{username}'...")
-                    await self._register_from_urls(self._ws, username, face_urls, request_id)
+                    # Thay đổi cách gọi hàm xử lý đăng ký
+                    await self._register_user_async(username, face_urls)
                 else:
-                    self._status_queue.put("Invalid registration payload.")
-            
-            elif topic == "VMXSys/VAIPLF2CtrlBox/accesscontrol" and action == "remove":
+                    print("DEBUG WS: Invalid registration payload")
+
+            elif topic == "VMXSys/CtrlBox2Device/accesscontrol" and action == "remove":
                 command = payload.get("command")
                 if command == "all":
-                    print("DEBUG WS: Received command to reset all users. Notifying app and stopping communication.")
+                    deviceId = payload.get("deviceId", 1)
+                    print("DEBUG WS: Received command to remove ALL users.")
                     self._status_queue.put("CMD:RESET_USERS")
-                    # Per requirement, do not send a confirmation message back to STB.
+                    await self._send_remove_response(self._ws, command="all", result="completed", deviceId=deviceId)
+                elif command == "user":
+                    faceId = payload.get("faceId")
+                    if faceId:
+                         print(f"DEBUG WS: Received command to remove user {faceId}")
+                         self._status_queue.put(f"CMD:DELETE_USER:{faceId}")
+                         # Phản hồi completed ngay lập tức (hoặc có thể đợi App xóa xong rồi gửi, 
+                         # nhưng ở đây ta gửi luôn để confirm đã nhận lệnh)
+                         await self._send_remove_response(self._ws, command="user", result="completed", faceId=faceId)
 
-        except json.JSONDecodeError:
-            self._status_queue.put("Received non-JSON message.")
-            print("DEBUG WS: Received non-JSON message.")
         except Exception as e:
-            self._status_queue.put(f"Error handling message: {e}")
             print(f"DEBUG WS: Error handling message: {e}")
 
-    async def _register_from_urls(self, ws, username, face_urls, request_id):
-        print(f"DEBUG WS: Starting registration process for '{username}'.")
-        if self._user_management.is_name_registered(username):
-            message = f"User '{username}' already exists."
-            print(f"DEBUG WS: {message}")
-            self._status_queue.put(message)
-            return
+    # ====================================================================
+    # PHẦN QUAN TRỌNG NHẤT: Tách xử lý nặng ra khỏi Async Loop
+    # ====================================================================
 
-        # =================================================================================
-        # NEW LOGIC (2025-11-21): Only process the first URL from the list
-        # =================================================================================
-        feature_vector = None
+    def _heavy_registration_task(self, username, face_urls):
+        """Hàm này chứa toàn bộ logic 'nặng' (Blocking code)"""
+        print(f"DEBUG THREAD: Start heavy processing for {username}")
+        
+        # 1. Check User Exist (Idempotent Handling)
+        if self._user_management.is_name_registered(username):
+            print(f"DEBUG THREAD: User '{username}' already exists. Returning success (Idempotent).")
+            # Find existing UUID to return
+            existing_uuid = ""
+            self._user_management.load_data() # Ensure fresh data
+            for uid, udata in self._user_management.users.items():
+                if udata.get('name') == username:
+                    existing_uuid = udata.get('uuid', "")
+                    break
+            
+            return {"status": "completed", "faceId": existing_uuid, "msg": "User already exists"}
+
+        # 2. Download & Decode Image
         if not face_urls:
-            print("DEBUG WS: ERROR - No face URLs provided.")
-            self._status_queue.put("No face URLs provided for registration.")
-            return
+             return {"status": "failed", "faceId": "", "msg": "No URLs"}
 
         first_url = face_urls[0]
-        print(f"DEBUG WS: Processing only the first URL: {first_url}")
+        feature_vector = None
 
         try:
+            # Tác vụ mạng (Blocking)
             response = requests.get(first_url, timeout=10)
             response.raise_for_status()
             image_array = np.frombuffer(response.content, np.uint8)
+            # Tác vụ CPU (Blocking)
             image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
             
-            if image is None:
-                print(f"DEBUG WS: WARNING - Failed to decode image from {first_url}.")
-                self._status_queue.put(f"Failed to decode image from URL.")
-                return
-
-            result, facial_feature = FR.register_user(image, image.shape[0], image.shape[1], image.shape[2])
-            
-            if result == 0 and len(facial_feature) == 128:
-                print(f"DEBUG WS: Successfully extracted features from the first URL.")
-                feature_vector = np.array(facial_feature, dtype='float32')
-            else:
-                print(f"DEBUG WS: WARNING - Failed to get valid features from the first URL. Result: {result}, Length: {len(facial_feature)}")
-
+            if image is not None:
+                # Tác vụ AI siêu nặng (Blocking)
+                result, facial_feature = FR.register_user(image, image.shape[0], image.shape[1], image.shape[2])
+                if result == 0 and len(facial_feature) == 128:
+                    feature_vector = np.array(facial_feature, dtype='float32')
         except Exception as e:
-            print(f"DEBUG WS: ERROR - Exception while processing image from {first_url}: {e}")
-            self._status_queue.put(f"Error processing image from URL: {e}")
-            return
-        
-        if feature_vector is None:
-            message = "No valid face found in the first image."
-            print(f"DEBUG WS: {message} Aborting registration.")
-            self._status_queue.put(message)
-            return
+            print(f"DEBUG THREAD: Error in heavy task: {e}")
+            return {"status": "failed", "faceId": "", "msg": str(e)}
 
+        if feature_vector is None:
+             return {"status": "failed", "faceId": "", "msg": "No face found"}
+
+        # 3. Save to DB & FAISS
         try:
-            # Reshape and normalize the single feature vector
             final_feature = feature_vector.reshape(1, 128)
             faiss.normalize_L2(final_feature)
-            print("DEBUG WS: Single feature vector processed and normalized.")
 
-            print("DEBUG WS: Registering user in UserManagement.")
+            # Tác vụ I/O Database
             success, message, new_int_id, new_uuid = self._user_management.register_user(username)
-            print(f"DEBUG WS: UserManagement result: success={success}, msg='{message}', id={new_int_id}")
             
             if success:
-                print(f"DEBUG WS: Adding vector to FAISS with ID {new_int_id}.")
+                # Lưu ý: faiss_index thường không thread-safe tuyệt đối, 
+                # nhưng index add/search cơ bản thường ổn.
                 self._faiss_index.add_with_ids(final_feature, np.array([new_int_id]).astype('int64'))
-                print("DEBUG WS: Writing updated FAISS index to disk.")
                 faiss.write_index(self._faiss_index, "facial_faiss_index.bin")
-                self._status_queue.put(f"Successfully registered '{username}'.")
-                print("DEBUG WS: Local registration complete.")
-
-                response_payload = {
-                    "TOPIC": "VMXSys/VAIPLF2CtrlBox/accesscontrol",
-                    "PAYLOAD": {
-                        "action": "register",
-                        "username": username,
-                        "face_urls": face_urls, # Still report original URLs
-                        "request_id": request_id,
-                        "timestamp": int(time.time() * 1000),
-                        "faceId": new_uuid,
-                        "result": "completed"
-                    }
-                }
-                print("DEBUG WS: Preparing to send 'completed' message to server.")
-                await ws.send(json.dumps(response_payload))
-                print("DEBUG WS: 'completed' message sent successfully.")
-                self._status_queue.put(f"Sent registration confirmation for '{username}'.")
+                return {"status": "completed", "faceId": new_uuid, "msg": "Success"}
             else:
-                print(f"DEBUG WS: ERROR - UserManagement registration failed: {message}")
-                self._status_queue.put(f"Failed to register '{username}': {message}")
+                return {"status": "failed", "faceId": "", "msg": message}
+
         except Exception as e:
-            print(f"DEBUG WS: CRITICAL ERROR after feature extraction: {e}")
-            self._status_queue.put(f"Critical error during final registration steps: {e}")
+            return {"status": "failed", "faceId": "", "msg": str(e)}
 
-        # =================================================================================
-        # PREPARED CODE: Store 3 separate vectors for one user
-        # =================================================================================
-        # # Collect all feature vectors first
-        # feature_vectors = []
-        # print(f"DEBUG WS: Processing {len(face_urls)} face URLs.")
-        # for i, url in enumerate(face_urls):
-        #     try:
-        #         print(f"DEBUG WS: Processing URL {i+1}/{len(face_urls)}: {url}")
-        #         response = requests.get(url, timeout=10)
-        #         response.raise_for_status()
-        #         image_array = np.frombuffer(response.content, np.uint8)
-        #         image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
-                
-        #         if image is None:
-        #             print(f"DEBUG WS: WARNING - Failed to decode image from {url}.")
-        #             continue
-
-        #         result, facial_feature = FR.register_user(image, image.shape[0], image.shape[1], image.shape[2])
-                
-        #         if result == 0 and len(facial_feature) == 128:
-        #             print(f"DEBUG WS: Successfully extracted features from URL {i+1}.")
-        #             feature_vectors.append(np.array(facial_feature, dtype='float32'))
-        #         else:
-        #             print(f"DEBUG WS: WARNING - Failed to get valid features from URL {i+1}. Result: {result}")
-        #     except Exception as e:
-        #         print(f"DEBUG WS: ERROR - Exception while processing image from {url}: {e}")
-        #         continue
+    async def _register_user_async(self, username, face_urls):
+        """Wrapper bất đồng bộ để gọi hàm nặng trong Executor"""
+        loop = asyncio.get_running_loop()
         
-        # print(f"DEBUG WS: Finished processing URLs. Found {len(feature_vectors)} valid feature vectors.")
-        # if not feature_vectors:
-        #     message = "No valid faces found in the provided images."
-        #     print(f"DEBUG WS: {message} Aborting registration.")
-        #     self._status_queue.put(message)
-        #     return
+        # CHẠY HÀM NẶNG TRONG THREAD POOL ĐỂ KHÔNG CHẶN LOOP
+        # run_in_executor(None, ...) sẽ dùng Default ThreadPoolExecutor
+        result_data = await loop.run_in_executor(
+            None, 
+            partial(self._heavy_registration_task, username, face_urls)
+        )
 
-        # try:
-        #     # Register user in management system ONCE to get a base ID
-        #     print("DEBUG WS: Registering user in UserManagement.")
-        #     success, message, new_int_id, new_uuid = self._user_management.register_user(username)
-        #     print(f"DEBUG WS: UserManagement result: success={success}, msg='{message}', id={new_int_id}")
+        # Sau khi xử lý xong, gửi kết quả lại qua WebSocket (Non-blocking)
+        if result_data["status"] == "completed":
+            self._status_queue.put(f"Successfully registered '{username}'.")
+            self._status_queue.put("CMD:RELOAD_DATA")
+            await self._send_register_response(self._ws, username, face_urls, "completed", faceId=result_data["faceId"])
+        else:
+            self._status_queue.put(f"Registration failed: {result_data['msg']}")
+            await self._send_register_response(self._ws, username, face_urls, "failed", faceId="")
 
-        #     if success:
-        #         # Add each feature vector to FAISS with a unique, derived ID
-        #         ids_to_add = []
-        #         vectors_to_add = []
-        #         for i, vector in enumerate(feature_vectors):
-        #             # Derive a unique ID, e.g., for user ID 5, vectors will have IDs 50, 51, 52
-        #             vector_id = new_int_id * 10 + i 
-        #             ids_to_add.append(vector_id)
-                    
-        #             # Normalize the vector
-        #             normalized_vector = vector.reshape(1, 128)
-        #             faiss.normalize_L2(normalized_vector)
-        #             vectors_to_add.append(normalized_vector)
-                    
-        #             print(f"DEBUG WS: Preparing vector {i+1} for FAISS with derived ID {vector_id}.")
+    async def _send_remove_response(self, ws, command, result, faceId=None, deviceId=None):
+        payload = {"action": "remove", "command": command, "result": result}
+        if faceId: payload["faceId"] = faceId
+        if deviceId: payload["deviceId"] = deviceId
+        response = {"TOPIC": "VMXSys/VAIPLF2CtrlBox/accesscontrol", "PAYLOAD": payload}
+        try: await ws.send(json.dumps(response))
+        except: pass
 
-        #         # Add all vectors and their IDs to FAISS in one go
-        #         if vectors_to_add:
-        #             self._faiss_index.add_with_ids(np.vstack(vectors_to_add), np.array(ids_to_add).astype('int64'))
-                
-        #         print(f"DEBUG WS: Writing {len(vectors_to_add)} vectors to updated FAISS index.")
-        #         faiss.write_index(self._faiss_index, "facial_faiss_index.bin")
-        #         self._status_queue.put(f"Successfully registered '{username}' with {len(vectors_to_add)} face vectors.")
-        #         print("DEBUG WS: Local registration complete.")
-                
-        #         # ... (Send 'completed' message back via websocket as before) ...
-        #         response_payload = {
-        #             "TOPIC": "VMXSys/VAIPLF2CtrlBox/accesscontrol",
-        #             "PAYLOAD": {
-        #                 "action": "register",
-        #                 "username": username,
-        #                 "face_urls": face_urls,
-        #                 "request_id": request_id,
-        #                 "timestamp": int(time.time() * 1000),
-        #                 "faceId": new_uuid,
-        #                 "result": "completed"
-        #             }
-        #         }
-        #         await ws.send(json.dumps(response_payload))
-
-        #     else:
-        #         print(f"DEBUG WS: ERROR - UserManagement registration failed: {message}")
-        #         self._status_queue.put(f"Failed to register '{username}': {message}")
-        # except Exception as e:
-        #     print(f"DEBUG WS: CRITICAL ERROR after feature extraction: {e}")
-        #     self._status_queue.put(f"Critical error during final registration steps: {e}")
+    async def _send_register_response(self, ws, username, face_urls, result, faceId):
+        response = {
+            "TOPIC": "VMXSys/VAIPLF2CtrlBox/accesscontrol",
+            "PAYLOAD": {
+                "action": "register", "username": username, "face_urls": face_urls,
+                "faceId": faceId, "result": result
+            }
+        }
+        try: await ws.send(json.dumps(response))
+        except: pass
