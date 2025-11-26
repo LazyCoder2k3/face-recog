@@ -98,7 +98,6 @@ static void _load_input_meta_yunet()
             VNN_PREPRO_NONE, sizeof(int32_t) * VNN_PREPRO_NUM);
     }
     /* lid: input_118 - Yunet expects input size [640, 640, 3] */
-    // ===== YUNET RGB INPUT MODE (RESTORED - Original working version) =====
     input_meta_tab_yunet[0].image.preprocess[0] = VNN_PREPRO_REORDER;  // BGR to RGB conversion
     input_meta_tab_yunet[0].image.preprocess[1] = VNN_PREPRO_MEAN;
     input_meta_tab_yunet[0].image.preprocess[2] = VNN_PREPRO_SCALE;
@@ -846,7 +845,7 @@ vsi_nn_graph_t* graphAntiSpf = nullptr;
 #endif
 int32_t init_neural_networks() {
     const char* model_name_facedetect = nullptr;
-    const char* model_name_sface = nullptr;
+    const char* model_name_embedding = nullptr;
 #if ANTI_SPOOFING
     const char* model_name_anti_spf = nullptr;
 #endif
@@ -855,14 +854,14 @@ int32_t init_neural_networks() {
     // model_name_facedetect = "network_binary_face_detector.nb";
     // NEW YUNET FACE DETECTOR
     model_name_facedetect = "Yunet.nb";
-    // model_name_sface = "sface.export.data";  // Old format
-    model_name_sface = "sface.nb";  // New NBG format (optimized)
-    // model_name_sface = "facenet512.export.data";
+    // model_name_embedding = "sface.export.data";  // Old format
+    model_name_embedding = "sface.nb";  // New NBG format (optimized)
+    // model_name_embedding = "facenet512.export.data";
 #if ANTI_SPOOFING
     model_name_anti_spf = "anti-spoof-mn3.export.data";
 #endif
     std::cout << "model_name_facedetect (YUNET): " << model_name_facedetect << std::endl;
-    std::cout << "model_name_sface: " << model_name_sface << std::endl;    
+    std::cout << "model_name_embedding: " << model_name_embedding << std::endl;    
 #if ANTI_SPOOFING
     std::cout << "model_name_anti_spf: " << model_name_anti_spf << std::endl;    
 #endif
@@ -870,7 +869,7 @@ int32_t init_neural_networks() {
     // graphFaceDetect = vnn_CreateNeuralNetworkFacedetector3Uint8(model_name_facedetect);
     // NEW YUNET FACE DETECTOR
     graphFaceDetect = vnn_CreateNeuralNetworkYunet(model_name_facedetect);
-    graphSface = vnn_CreateNeuralNetworkSface(model_name_sface);
+    graphSface = vnn_CreateNeuralNetworkSface(model_name_embedding);
 #if ANTI_SPOOFING
     graphAntiSpf = vnn_CreateNeuralNetworkAntiSpoof(model_name_anti_spf);
 #endif

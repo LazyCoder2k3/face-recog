@@ -1,88 +1,161 @@
-# Thông tin các File
+# Face Recognition — README
 
-## Các file cần thiết để chạy:
-Tất cả đã được để trong folder [FaceRecognition-FAISS](./FaceRecognition-FAISS)
+Short introduction, main components and build/run instructions for the Face Recognition system (Streamlit UI + native model wrapper).
 
-Đưa tất cả file trong folder trên vào máy ssh nếu chưa có. Hiện tại trên SOM đã có các file này. 
+**Main files & directories**
+- `FaceRecognition-FAISS/`: Streamlit app, model `.nb` files and user data.
+- `face_recognition_sface_2021dec_ovx/`: native (C/C++) code and Makefile — builds `libFaceRecog_wrapper.so`.
+- `FaceRecognition_sface_pybind/`: pybind11 bindings for Python (rebuild only when bindings change).
+- `FaceRecog_UI/`: legacy or alternate UI resources (if present).
 
-## 🚀 Hướng dẫn chạy ứng dụng
+**Current UI summary (based on `FaceRecognition-FAISS/app_streamlit.py`)**
+- Sidebar — Configuration:
+  - `Camera Source`: enter an RTSP URL or `0` for a USB camera.
+  - `WebSocket (Server IP/Port)`: configure server address for control messages.
+  - Camera Controls: `Start Camera` / `Stop Camera`.
+  - WebSocket Controls: `Connect WS` / `Disconnect WS`.
+  - Face Recognition: `Threshold` slider (default ~`0.6`) to adjust cosine similarity threshold.
+  - `Reset All Users`: clears user data and resets the FAISS index.
 
+- Main layout:
+  - Camera Feed: shows live video, draws bounding boxes and names when face is recognized.
+  - System Status: displays WebSocket status and other messages.
+  - Manual Registration: enter a name and click `Register Current Face` to save a feature vector.
+  - Access History: a table with check-in history.
 
-### SSH vào máy server
-```ssh itri@10.60.3.235```
+**How it works (brief)**
+- The app reads frames from `ThreadedCamera`, calls the native detect/recognize functions (C++ wrapper), draws bounding boxes on the frame and updates the FAISS index.
+- Manual registration calls `FR.register_user(...)` (via the wrapper) and stores a 128-dimensional feature vector in FAISS.
 
-### Thiết lập biến môi trường
-```export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/itri/Working/prebuilt/opencv/lib```
+**Screenshots (real)**
+- `images/camera_and_websocket_control.jpg` — sidebar: camera source, websocket settings and control buttons.
+- `images/threshold.jpg` — threshold (similarity) slider UI.
+- `images/regist_manual.jpg` — manual registration UI (name input + register button).
+- `images/access_history.jpg` — access history table shown in the right column.
 
-```export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD```
+![](images/camera_and_websocket_control.jpg)
 
-### Kích hoạt môi trường ảo Python
-```cd ~/Working/Demo/```
+Example: threshold slider:
 
-```source venv_3.8/bin/activate```
+![](images/threshold.jpg)
 
-### Chạy ứng dụng Streamlit
-```cd ~/Working/NATu/FaceRecognition-FAISS```
+Other screenshots (registration and history):
 
-```streamlit run app_streamlit.py```
+![](images/regist_manual.jpg)
 
-## Build lại file, thay đổi model
-Vào folder [face_recognition_sface_2021dec_ovx](./face_recognition_sface_2021dec_ovx), thay đổi file `FaceRecog_wrapper.cpp` để thay đổi đường dẫn các model, thay đổi cách tiền xử lý và hậu xử lý dữ liệu bên ngoài mô hình.
+![](images/access_history.jpg)
 
-Vào folder [FaceRecog_UI](./FaceRecog_UI) để thay đổi giao diện, cách quản lý các file thông tin người dùng.
+**Change model / preprocessing / postprocessing**
+- Edit `face_recognition_sface_2021dec_ovx/FaceRecog_wrapper.cpp`.
+- If you add new native functions, update `FaceRecognition_sface_pybind` and rebuild the bindings.
 
-Vào folder [FaceRecognition_sface_pybind](./FaceRecognition_sface_pybind) để thêm các hàm mới cần dùng nếu có thêm hàm mới ở file `FaceRecog_wrapper.cpp`.
+**Build & Deploy (summary from `README-FaceRecognition.txt`)**
 
-Sau đó build lại file theo hướng dẫn trong file [README-FaceRecognition.txt](./README-FaceRecognition.txt)
+1) Unpack sources (if you have compressed archives):
 
-# 🧑‍💻 Face Recognition Attendance System  
+```bash
+tar -xf face_recognition_sface_2021dec_ovx.tgz
+tar -xf FaceRecognition_sface_pybind.tgz
+```
 
-Ứng dụng nhận diện khuôn mặt để điểm danh, quản lý người dùng và theo dõi lịch sử ra/vào.  
+2) Set required environment variables (adjust paths for your system):
 
-Hệ thống hỗ trợ cấu hình ngưỡng nhận diện, lựa chọn nguồn camera (USB hoặc IP Cam), đồng thời ghi lại lịch sử truy cập để tiện theo dõi.  
+```bash
+export ROOT_DIR=YOUR_PATH
+export OPENCV_INCLUDE=$ROOT_DIR/opencv4.10/include
+export OPENCV_LIB=$ROOT_DIR/opencv4.10/lib
+
+# If cross-compiling for aarch64 (optional)
+export CROSS_COMPILE=YOUR_PATH/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+
+# If using Vivante SDK (optional)
+export VIVANTE_SDK_DIR=YOUR_PATH/6.4.15.9
+```
+
+3) Build the native wrapper (on target or via cross-compile):
+
+```bash
+cd face_recognition_sface_2021dec_ovx
+make clean
+make
+```
+
+4) (Optional) Rebuild Python bindings if you changed bindings:
+
+```bash
+cd FaceRecognition_sface_pybind/build
+cmake ..
+make -j
+```
+
+5) Copy `libFaceRecog_wrapper.so` to the server (example):
+
+```bash
+scp libFaceRecog_wrapper.so itri@10.60.3.235:/home/itri/Working/NATu/FaceRecognition-FAISS
+```
+
+**Run the Streamlit app (on server)**
+
+```bash
+ssh itri@10.60.3.235
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/itri/Working/prebuilt/opencv/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD
+
+cd ~/Working/Demo/
+source venv_3.8/bin/activate
+
+cd ~/Working/NATu/FaceRecognition-FAISS
+streamlit run app_streamlit.py
+```
+
+If you develop on Windows locally, create a Python 3.8 virtual environment and install required packages (see `FaceRecognition-FAISS/requirements.txt` if present).
+
+**Run native binary (face detection) — single / multi image**
+If you have a native `main` binary (for face detection), typical usage is:
+
+```bash
+chmod +x ./main
+./main <data_file.nb> <input1.jpg> [input2.jpg ...]
+```
+
+Example single image:
+
+```bash
+./main FaceDetectionYunet2023marFp16.nb vmx_1_640_640.jpg
+```
+
+Example multi-image inference:
+
+```bash
+./main FaceDetectionYunet2023marFp16.nb vmx_1_640_640.jpg vmx_2_640_640.jpg
+```
+
+Use a full path if the binary is located elsewhere.
+
+**Performance note (important)**
+Processing a single frame with the model requires a significant amount of compute — typically several hundred milliseconds per frame on embedded/edge hardware. To keep the Streamlit UI responsive, the app intentionally processes only one frame every N frames.
+
+In `FaceRecognition-FAISS/app_streamlit.py` look for the global `FREQUENCY = 16`. This controls how often a frame is passed to the model (currently every 16th frame). Increase this number if your hardware is weaker (less frequent model runs), or decrease it if you have stronger hardware and need more frequent processing.
+
+Example: set `FREQUENCY = 32` to run the model less often on low-end hardware, or `FREQUENCY = 8` to run more frequently on powerful machines.
+
+**Troubleshooting & notes**
+- If Streamlit fails to start due to missing OpenCV libraries, ensure `LD_LIBRARY_PATH` includes your OpenCV `lib` directory (see exports above).
+- If RTSP camera does not connect, verify the URL, network connectivity and credentials.
+- If the FAISS index becomes corrupted, remove `facial_faiss_index.bin` and the app will recreate it.
+
+**Files you may want to edit**
+- `face_recognition_sface_2021dec_ovx/FaceRecog_wrapper.cpp`: change models and preprocess/postprocess.
+- `FaceRecognition_sface_pybind/*`: Python binding sources.
+- `FaceRecognition-FAISS/app_streamlit.py`: application UI, thresholds and registration flow.
 
 ---
-
-## 📊 Bảng lịch sử truy cập  
-Ứng dụng có bảng hiển thị **lịch sử ra/vào**, bao gồm:  
-- **Tên người dùng**  
-- **Thời gian truy cập**  
-- **Trạng thái** (đã đăng ký/chưa đăng ký)  
+If you want, I can:
+- add or crop the screenshots to improve the README layout;
+- create a `run_local.sh` script to set environment variables and start Streamlit for local development;
+- commit and push this README change and open a PR for review.
 
 
----
-
-## ⚙️ Các khung chức năng  
-
-### 1. Khung hiệu chỉnh độ tương đồng  
-- Cho phép điều chỉnh **ngưỡng độ tương đồng** để xác định một người có được coi là đã đăng ký trong hệ thống.  
-- **Mặc định:** `0.7`  
-- **Khuyến cáo:** trong khoảng `[0.4 – 0.7]`  
-- Ngưỡng càng thấp → dễ nhận diện nhầm, ngưỡng càng cao → dễ bỏ sót.  
-
-👉 Minh họa:  
-![Khung điều chỉnh độ tương đồng](./images/threshold.jpg)  
-
----
-
-### 2. Khung camera source  
-- Điền **đường dẫn IP Camera** để sử dụng camera IP.  
-- Điền `0` để sử dụng **USB Camera** (mặc định).  
-
-👉 Minh họa:  
-![Khung camera](./images/camera_source.jpg)  
-
----
-
-## 🎛️ Danh sách nút chức năng  
-
-- **Start Camera** → Bắt đầu kết nối với camera.  
-- **Name + Regis** → Nhập tên vào ô **Name**, sau đó bấm **Regis** để đăng ký người dùng mới.  
-- **Reset user** → Xóa toàn bộ thông tin (bao gồm dữ liệu người dùng & lịch sử ra/vào).  
-- **Stop Camera** → Ngắt kết nối camera.  
-👉 Minh họa:  
-![Các nút chức năng](./images/button.jpg)  
----
 
 
 
