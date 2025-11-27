@@ -111,29 +111,7 @@ cd YOUR_PATH/FaceRecognition-FAISS
 streamlit run app_streamlit.py
 ```
 
-If you develop on Windows locally, create a Python 3.8 virtual environment and install required packages (see `FaceRecognition-FAISS/requirements.txt` if present).
-
-**Run native binary (face detection) — single / multi image**
-If you have a native `main` binary (for face detection), typical usage is:
-
-```bash
-chmod +x ./main
-./main <data_file.nb> <input1.jpg> [input2.jpg ...]
-```
-
-Example single image:
-
-```bash
-./main FaceDetectionYunet2023marFp16.nb vmx_1_640_640.jpg
-```
-
-Example multi-image inference:
-
-```bash
-./main FaceDetectionYunet2023marFp16.nb vmx_1_640_640.jpg vmx_2_640_640.jpg
-```
-
-Use a full path if the binary is located elsewhere.
+If you develop on Windows locally, create a Python 3.8 virtual environment and install required packages (see `FaceRecognition-FAISS/requirements.txt`).
 
 **Performance note (important)**
 Processing a single frame with the model requires a significant amount of compute — typically several hundred milliseconds per frame on embedded/edge hardware. To keep the Streamlit UI responsive, the app intentionally processes only one frame every N frames.
@@ -148,15 +126,14 @@ Example: set `FREQUENCY = 32` to run the model less often on low-end hardware, o
 - If the FAISS index becomes corrupted, remove `facial_faiss_index.bin` and the app will recreate it.
 
 **Files you may want to edit**
-- `face_recognition_sface_2021dec_ovx/FaceRecog_wrapper.cpp`: change models and preprocess/postprocess.
+- `AI_model/FaceRecog_wrapper.cpp`: handle AI models, preprocessing, postprocessing and workflow of face recognition feature and face registration feature.
+- `AI_model/preprocess.cpp`: handle preprocessing methods.
+- `AI_model/postprocess.cpp`: handle postprocessing methods.  
 - `FaceRecognition_sface_pybind/*`: Python binding sources.
-- `FaceRecognition-FAISS/app_streamlit.py`: application UI, thresholds and registration flow.
-
----
-If you want, I can:
-- add or crop the screenshots to improve the README layout;
-- create a `run_local.sh` script to set environment variables and start Streamlit for local development;
-- commit and push this README change and open a PR for review.
+- `FaceRecognition-FAISS/app_streamlit.py`: handle application UI, thresholds and registration flow.
+- `FaceRecognition-FAISS/websocket_client.py`: handle websocket messages.
+- `FaceRecognition-FAISS/user_management.py`: handle user management.
+- `FaceRecognition-FAISS/user_history.py`: handle user access history.
 
 
 

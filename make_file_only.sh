@@ -18,7 +18,7 @@ echo "VIVANTE_SDK_DIR: $VIVANTE_SDK_DIR"
 echo "============================================"
 
 # Navigate to build directory
-cd /mnt/i/AnhTu/VNEMEX/face-recog/face_recognition_sface_2021dec_ovx
+cd /mnt/i/AnhTu/VNEMEX/face-recog/AI_model
 
 # Clean previous build
 echo "Cleaning previous build..."

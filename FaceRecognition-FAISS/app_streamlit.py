@@ -345,18 +345,19 @@ if st.session_state.camera_active:
                         
                         # Search Top K (k=3)
                         k = 3
-                        dists, idxs = faiss_index.search(vec, k)
+                        sims, idxs = faiss_index.search(vec, k)
                         
                         best_match_name = None
                         best_score = -1.0
                         
                         if len(idxs) > 0 and len(idxs[0]) > 0:
                             for i, int_id in enumerate(idxs[0]):
-                                score = dists[0][i]
+                                score = sims[0][i]
                                 if int_id != -1:
                                     user_info = user_management.get_user_by_id(int_id)
                                     if user_info:
                                         u_name = user_info['name']
+                                        print(f"Nearest neighbor {i+1}: ID: {int_id}, Similarity: {score:.4f}, Name: {u_name}")
                                         # Logic chọn best match
                                         if i == 0 and score >= st.session_state.cos_sim_thresh:
                                             best_match_name = u_name
