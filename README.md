@@ -51,11 +51,14 @@ Other screenshots (registration and history):
 
 **Build & Deploy (summary from `README-FaceRecognition.txt`)**
 
-1) Unpack sources (if you have compressed archives):
+1) Verify sources. Your project these folder :
 
-```bash
-tar -xf face_recognition_sface_2021dec_ovx.tgz
-tar -xf FaceRecognition_sface_pybind.tgz
+```
+|_ AI_model
+|_ FaceRecognition_sface_pybind
+|_ python-3.8-header
+|_ FaceRecognition-FAISS
+
 ```
 
 2) Set required environment variables (adjust paths for your system):
