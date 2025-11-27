@@ -34,14 +34,13 @@
 
 #include "vnn_global.h"
 #include "vnn_pre_process.h"
-#include "vnn_post_process_sface.h"
+#include "vnn_post_process.h"
 // OLD FACE DETECTOR - Commented out for Yunet migration
 // #include "vnn_post_process_facedetector.hpp"
 #include "vnn_post_process_anfispoof.h"
 
 // NEW YUNET FACE DETECTOR - Network Binary (.nb format)
-#include "vnn_pre_process_yunet_network_binary.h"
-#include "vnn_post_process_yunet_network_binary.h"
+
 
 extern "C" {
 // OLD FACE DETECTOR - Commented out
@@ -516,7 +515,7 @@ static vsi_nn_graph_t *vnn_CreateNeuralNetworkYunet
 
     tmsStart = get_perf_count();
     graph = vnn_CreateYunetNBG( data_file_name, NULL,
-                      vnn_GetPreProcessMapYunet(), vnn_GetPreProcessMapCountYunet(),
+                      vnn_GetPreProcessMap(), vnn_GetPreProcessMapCount(),
                       vnn_GetPostProcessMapYunet(), vnn_GetPostProcessMapCountYunet() );
     TEST_CHECK_PTR(graph, final);
 
@@ -536,9 +535,9 @@ static void vnn_ReleaseNeuralNetworkYunet
     )
 {
     vnn_ReleaseYunetNBG( graph, TRUE );
-    if (vnn_UseImagePreprocessNodeYunet())
+    if (vnn_UseImagePreprocessNode())
     {
-        vnn_ReleaseBufferImageYunet();
+        vnn_ReleaseBufferImage();
     }
 }
 
@@ -577,7 +576,7 @@ static vsi_nn_graph_t *vnn_CreateNeuralNetworkAntiSpoof
     tmsStart = get_perf_count();
     graph = vnn_CreateAntiSpoof( data_file_name, NULL,
                       vnn_GetPreProcessMap(), vnn_GetPreProcessMapCount(),
-                      vnn_GetPostProcessMap(), vnn_GetPostProcessMapCount() );
+                      NULL, 0 );
     TEST_CHECK_PTR(graph, final);
 
     tmsEnd = get_perf_count();
@@ -603,7 +602,7 @@ static vsi_nn_graph_t *vnn_CreateNeuralNetworkSface
     // graph = vnn_CreateSface( data_file_name, NULL,  // Old format
     graph = vnn_CreateSfaceNBG( data_file_name, NULL,  // New NBG format
                       vnn_GetPreProcessMap(), vnn_GetPreProcessMapCount(),
-                      vnn_GetPostProcessMap(), vnn_GetPostProcessMapCount() );
+                      vnn_GetPostProcessMapSface(), vnn_GetPostProcessMapCountSface() );
     TEST_CHECK_PTR(graph, final);
 
     tmsEnd = get_perf_count();
@@ -796,7 +795,7 @@ std::tuple<uint8_t, std::vector<float>> register_user(cv::Mat img) {
 
     // YUNET PREPROCESSING (now handled internally by vnn_PreProcessYunet)
     std::cout << "[C++ REG DEBUG]   Calling vnn_PreProcessYunet..." << std::endl;
-    statusFaceDetect = vnn_PreProcessYunet(graphFaceDetect, 1, yunet_input.data);
+    statusFaceDetect = vnn_PreProcess(graphFaceDetect, 1, yunet_input.data);
     // --- End Full Preprocessing Pipeline ---
 
     if (statusFaceDetect != VSI_SUCCESS) {
@@ -913,15 +912,15 @@ std::tuple<uint8_t, std::vector<float>> register_user(cv::Mat img) {
             // Ensure we return a failure status if feature extraction fails
             statusFaceDetect = VSI_FAILURE;
         }
-        return std::make_tuple(statusFaceDetect, facial_feature);
+        return {std::make_tuple(statusFaceDetect, facial_feature)};
     }
     else
     {
         std::cerr << "[C++ REG DEBUG]   ERROR: Expected 1 face, but detected " << faces.size() << ". Aborting." << std::endl;
-        return std::make_tuple(VSI_FAILURE, facial_feature);
+        return {std::make_tuple(VSI_FAILURE, facial_feature)};
     }
 }
-std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> detect_face(cv::Mat img) {
+std::vector<std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>>> detect_face(cv::Mat img) {
 
     // Static variable to store last successful detection result
     static std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> last_result = {0, 0, 0, 0, -1, {}};
@@ -939,7 +938,7 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     if (img.empty()) {
         std::cout << "Failed to read frame from camera." << std::endl;
         last_result = empty_result;
-        return empty_result;
+        return {empty_result};
     }
 
     // Yunet expects 640x640 input
@@ -958,17 +957,17 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     if (tensor == nullptr) {
         std::cerr << "[ERROR] detect_face: Failed to get input tensor for Yunet graph.\n";
         last_result = empty_result;
-        return empty_result;
+        return {empty_result};
     }
 
     // YUNET PREPROCESSING (now handled internally by vnn_PreProcessYunet)
-    statusFaceDetect = vnn_PreProcessYunet(graphFaceDetect, 1, yunet_input.data);
+    statusFaceDetect = vnn_PreProcess(graphFaceDetect, 1, yunet_input.data);
     // --- End Full Preprocessing Pipeline ---
 
     if (statusFaceDetect != VSI_SUCCESS) {
         std::cerr << "[YUNET] Pre-processing failed." << std::endl;
         last_result = empty_result;
-        return empty_result;
+        return {empty_result};
     }
     // ⏱️ Only calculating Yunet timing for inference
     uint64_t yunet_start = get_perf_count();
@@ -976,7 +975,7 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     if (statusFaceDetect != VSI_SUCCESS) {
         std::cerr << "[YUNET] Graph processing failed." << std::endl;
         last_result = empty_result;
-        return empty_result;
+        return {empty_result};
     }
 
     // YUNET POSTPROCESSING - extracts faces with landmarks
@@ -985,7 +984,7 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     if (statusFaceDetect != VSI_SUCCESS) {
         std::cerr << "[YUNET] Post-processing failed." << std::endl;
         last_result = empty_result;
-        return empty_result;
+        return {empty_result};
     }
 
     // ⏱️ End Yunet timing and print result
@@ -1140,13 +1139,13 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
         // Update last_result for smooth UI on skipped frames
         last_result = std::make_tuple(left, top, right, bottom, spoof_confidence, facial_feature);
         
-        return last_result;
+        return {last_result};
 
     } else {
         // No face detected - clear last_result to avoid showing stale bbox
         std::cerr << "[YUNET] Please capture person FACE." << std::endl;
         last_result = empty_result;
-        return empty_result;
+        return {empty_result};
     }
 }
 
@@ -1177,7 +1176,7 @@ std::vector<float> extractFeatures(cv::Mat img) {
     if(VNN_APP_DEBUG)
     {
         /* Dump all node outputs */
-        vsi_nn_DumpGraphNodeOutputs(graphSface, "./network_dump", NULL, 0, TRUE, 0);
+        vsi_nn_DumpGraphNodeOutputs(graphSface, "./network_dump", NULL, 0, TRUE, (vsi_nn_dim_fmt_e)0);
     }
 
     /* Post process output data */
@@ -1217,7 +1216,7 @@ float checkSpoofing(cv::Mat img) {
     if(VNN_APP_DEBUG)
     {
         /* Dump all node outputs */
-        vsi_nn_DumpGraphNodeOutputs(graphAntiSpf, "./network_dump", NULL, 0, TRUE, 0);
+        vsi_nn_DumpGraphNodeOutputs(graphAntiSpf, "./network_dump", NULL, 0, TRUE, (vsi_nn_dim_fmt_e)0);
     }
 
     /* Post process output data */
