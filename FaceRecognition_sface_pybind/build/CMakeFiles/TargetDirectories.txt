@@ -1,4 +1,5 @@
-I:/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/face_recognition_pybind.dir
-I:/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/ALL_BUILD.dir
-I:/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/ZERO_CHECK.dir
-I:/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/pybind11/CMakeFiles/ALL_BUILD.dir
+/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/rebuild_cache.dir
+/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/edit_cache.dir
+/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/face_recognition_pybind.dir
+/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/pybind11/CMakeFiles/rebuild_cache.dir
+/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/pybind11/CMakeFiles/edit_cache.dir

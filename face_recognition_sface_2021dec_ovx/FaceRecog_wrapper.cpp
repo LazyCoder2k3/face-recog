@@ -40,7 +40,7 @@
 #include "vnn_post_process_anfispoof.h"
 
 // NEW YUNET FACE DETECTOR - Network Binary (.nb format)
-#include "vnn_pre_process_yunet_network_binary.h"
+
 #include "vnn_post_process_yunet_network_binary.h"
 
 extern "C" {
@@ -77,204 +77,7 @@ extern "C" {
 static std::map<std::string, time_t> last_access_times;
 #define MIN_ACCESS_INTERVAL_SECONDS (5 * 60)  // 5 minutes in seconds
 
-// --- Helper functions and metadata for preprocessing (copied from vnn_pre_process_yunet_network_binary.cpp) ---
-#define VNN_PREPRO_NONE -1
-#define VNN_PREPRO_REORDER 0
-#define VNN_PREPRO_MEAN 1
-#define VNN_PREPRO_SCALE 2
-#define VNN_PREPRO_NUM 3 // Total number of preprocess steps
 
-// TYPEDEFS REMOVED TO PREVENT MULTIPLE DEFINITION ERRORS
-// They are already included from vnn_pre_process.h
-
-#define INPUT_META_NUM 1
-static vnn_input_meta_t input_meta_tab_yunet[INPUT_META_NUM];
-static void _load_input_meta_yunet()
-{
-    uint32_t i;
-    for (i = 0; i < INPUT_META_NUM; i++)
-    {
-        memset(&input_meta_tab_yunet[i].image.preprocess,
-            VNN_PREPRO_NONE, sizeof(int32_t) * VNN_PREPRO_NUM);
-    }
-    /* lid: input_118 - Yunet expects input size [640, 640, 3] */
-    input_meta_tab_yunet[0].image.preprocess[0] = VNN_PREPRO_REORDER;  // BGR to RGB conversion
-    input_meta_tab_yunet[0].image.preprocess[1] = VNN_PREPRO_MEAN;
-    input_meta_tab_yunet[0].image.preprocess[2] = VNN_PREPRO_SCALE;
-    
-    input_meta_tab_yunet[0].image.reorder[0] = 2;  // BGR to RGB reorder
-    input_meta_tab_yunet[0].image.reorder[1] = 1;
-    input_meta_tab_yunet[0].image.reorder[2] = 0;
-    
-    input_meta_tab_yunet[0].image.mean[0] = 0;
-    input_meta_tab_yunet[0].image.mean[1] = 0;
-    input_meta_tab_yunet[0].image.mean[2] = 0;
-    input_meta_tab_yunet[0].image.scale[0] = 1.0;
-    input_meta_tab_yunet[0].image.scale[1] = 1.0;
-    input_meta_tab_yunet[0].image.scale[2] = 1.0;
-}
-
-static float *_imageData_to_float32
-    (
-    uint8_t *bmpData,
-    vsi_nn_tensor_t *tensor
-    )
-{
-    float *fdata;
-    vsi_size_t sz,i;
-
-    fdata = NULL;
-    sz = vsi_nn_GetElementNum(tensor);
-    fdata = (float *)malloc(sz * sizeof(float));
-    // TEST_CHECK_PTR(fdata, final); // Cannot use TEST_CHECK_PTR here, needs to be handled by caller
-
-    if (!fdata) return NULL; // Manual check
-
-    for(i = 0; i < sz; i++)
-    {
-        fdata[i] = (float)bmpData[i];
-    }
-
-    // final: // Label not defined
-    return fdata;
-}
-
-static void _data_scale
-    (
-    float *fdata,
-    vnn_input_meta_t *meta,
-    vsi_nn_tensor_t *tensor
-    )
-{
-    vsi_size_t s0,s1,s2;
-    vsi_size_t i,j,offset;
-    float val,scale;
-
-    s0 = tensor->attr.size[0];
-    s1 = tensor->attr.size[1];
-    s2 = tensor->attr.size[2];
-    for(i = 0; i < s2; i++)
-    {
-        offset = s0 * s1 * i;
-        scale = meta->image.scale[i];
-        for(j = 0; j < s0 * s1; j++)
-        {
-            val = fdata[offset + j] * scale;
-            fdata[offset + j ] = val;
-        }
-    }
-
-}
-
-static void _data_mean
-    (
-    float *fdata,
-    vnn_input_meta_t *meta,
-    vsi_nn_tensor_t *tensor
-    )
-{
-    vsi_size_t s0,s1,s2;
-    vsi_size_t i,j,offset;
-    float val,mean;
-
-    s0 = tensor->attr.size[0];
-    s1 = tensor->attr.size[1];
-    s2 = tensor->attr.size[2];
-
-    for(i = 0; i < s2; i++)
-    {
-        offset = s0 * s1 * i;
-        mean = meta->image.mean[i];
-        for(j = 0; j < s0 * s1; j++)
-        {
-            val = fdata[offset + j] - mean;
-            fdata[offset + j ] = val;
-        }
-    }
-
-}
-
-static void _data_transform
-    (
-    float *fdata,
-    vnn_input_meta_t *meta,
-    vsi_nn_tensor_t *tensor
-    )
-{
-    vsi_size_t s0,s1,s2;
-    vsi_size_t i,j,offset,sz,order;
-    float * data;
-    uint32_t * reorder;
-
-    data = NULL;
-    reorder = meta->image.reorder;
-    s0 = tensor->attr.size[0];
-    s1 = tensor->attr.size[1];
-    s2 = tensor->attr.size[2];
-    sz = vsi_nn_GetElementNum(tensor);
-    data = (float *)malloc(sz * sizeof(float));
-    // TEST_CHECK_PTR(data, final); // Cannot use TEST_CHECK_PTR here, needs to be handled by caller
-    if (!data) return; // Manual check
-    memset(data, 0, sizeof(float) * sz);
-
-    for(i = 0; i < s2; i++)
-    {
-        if(s2 > 1 && reorder[i] <= s2)
-        {
-            order = reorder[i];
-        }
-        else
-        {
-            order = i;
-        }
-
-        offset = s0 * s1 * i;
-        for(j = 0; j < s0 * s1; j++)
-        {
-            data[j + offset] = fdata[j * s2 + order];
-        }
-    }
-
-    memcpy(fdata, data, sz * sizeof(float));
-    // final: // Label not defined
-    if(data)free(data);
-}
-
-static uint8_t *_float32_to_dtype
-    (
-    float *fdata,
-    vsi_nn_tensor_t *tensor
-    )
-{
-    vsi_status status;
-    uint8_t *data;
-    vsi_size_t sz,i,stride;
-
-    sz = vsi_nn_GetElementNum(tensor);
-    stride = vsi_nn_TypeGetBytes(tensor->attr.dtype.vx_type);
-    if(stride == 0)
-    {
-        stride = 1;
-    }
-    data = (uint8_t *)malloc(stride * sz * sizeof(uint8_t));
-    // TEST_CHECK_PTR(data, final); // Cannot use TEST_CHECK_PTR here, needs to be handled by caller
-    if (!data) return NULL; // Manual check
-    memset(data, 0, stride * sz * sizeof(uint8_t));
-
-    for(i = 0; i < sz; i++)
-    {
-        status = vsi_nn_Float32ToDtype(fdata[i], &data[stride * i], &tensor->attr.dtype);
-        if(status != VSI_SUCCESS)
-        {
-            if(data)free(data);
-            return NULL;
-        }
-    }
-
-    // final: // Label not defined
-    return data;
-}
-// --- End of Helper functions and metadata for preprocessing ---
 
 /*-------------------------------------------
                   Prototype Functions
@@ -713,7 +516,7 @@ static vsi_nn_graph_t *vnn_CreateNeuralNetworkYunet
 
     tmsStart = get_perf_count();
     graph = vnn_CreateYunetNBG( data_file_name, NULL,
-                      vnn_GetPreProcessMapYunet(), vnn_GetPreProcessMapCountYunet(),
+                      vnn_GetPreProcessMap(), vnn_GetPreProcessMapCount(),
                       vnn_GetPostProcessMapYunet(), vnn_GetPostProcessMapCountYunet() );
     TEST_CHECK_PTR(graph, final);
 
@@ -733,9 +536,9 @@ static void vnn_ReleaseNeuralNetworkYunet
     )
 {
     vnn_ReleaseYunetNBG( graph, TRUE );
-    if (vnn_UseImagePreprocessNodeYunet())
+    if (vnn_UseImagePreprocessNode())
     {
-        vnn_ReleaseBufferImageYunet();
+        vnn_ReleaseBufferImage();
     }
 }
 
@@ -991,48 +794,9 @@ std::tuple<uint8_t, std::vector<float>> register_user(cv::Mat img) {
         return std::make_tuple(VSI_FAILURE, facial_feature);
     }
 
-    _load_input_meta_yunet(); // Ensure metadata is loaded
-
-    // 1. Convert cv::Mat (BGR uint8) to float*
-    float *fdata = _imageData_to_float32(yunet_input.data, tensor);
-    if (fdata == nullptr) {
-        std::cerr << "[C++ REG DEBUG]   ERROR: Failed to convert image data to float32. Aborting." << std::endl;
-        return std::make_tuple(VSI_FAILURE, facial_feature);
-    }
-
-    // 2. Apply preprocessing steps (reorder, mean, scale)
-    for(int i = 0; i < VNN_PREPRO_NUM; i++) // VNN_PREPRO_NUM is 3
-    {
-        switch (input_meta_tab_yunet[0].image.preprocess[i])
-        {
-        case VNN_PREPRO_REORDER:
-            _data_transform(fdata, &input_meta_tab_yunet[0], tensor);
-            break;
-        case VNN_PREPRO_MEAN:
-            _data_mean(fdata, &input_meta_tab_yunet[0], tensor);
-            break;
-        case VNN_PREPRO_SCALE:
-            _data_scale(fdata, &input_meta_tab_yunet[0], tensor);
-            break;
-        default:
-            break;
-        }
-    }
-
-    // 3. Convert processed float* data to target dtype (uint8_t*)
-    uint8_t *processed_img_buffer = _float32_to_dtype(fdata, tensor);
-    if (processed_img_buffer == nullptr) {
-        std::cerr << "[C++ REG DEBUG]   ERROR: Failed to convert float32 data to target dtype. Aborting." << std::endl;
-        free(fdata); // Clean up float data
-        return std::make_tuple(VSI_FAILURE, facial_feature);
-    }
-    free(fdata); // Clean up float data
-
-    // YUNET PREPROCESSING (now just copies the fully preprocessed buffer)
-    std::cout << "[C++ REG DEBUG]   Calling vnn_PreProcessYunet..." << std::endl;
-    statusFaceDetect = vnn_PreProcessYunet(graphFaceDetect, 1, processed_img_buffer);
-
-    if (processed_img_buffer) free(processed_img_buffer); // Clean up processed buffer
+    // YUNET PREPROCESSING (now handled internally by vnn_PreProcess)
+    std::cout << "[C++ REG DEBUG]   Calling vnn_PreProcess..." << std::endl;
+    statusFaceDetect = vnn_PreProcess(graphFaceDetect, 1, yunet_input.data);
     // --- End Full Preprocessing Pipeline ---
 
     if (statusFaceDetect != VSI_SUCCESS) {
@@ -1157,25 +921,16 @@ std::tuple<uint8_t, std::vector<float>> register_user(cv::Mat img) {
         return std::make_tuple(VSI_FAILURE, facial_feature);
     }
 }
-std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> detect_face(cv::Mat img) {
+std::vector<std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>>> detect_face(cv::Mat img) {
 
-    // Static variable to store last successful detection result
-    static std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> last_result = {0, 0, 0, 0, -1, {}};
-    
-    std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> empty_result = {0, 0, 0, 0, -1, {}};
-    std::vector<float> facial_feature = {};
-    float spoof_thresh = 0.4;
-    float spoof_confidence = 1;
-
-    // Frame skipping is controlled by Python layer - C++ processes all frames sent to it
+    std::vector<std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>>> results;
     
     // ⏱️ Start total timing
     uint64_t total_start = get_perf_count();
 
     if (img.empty()) {
         std::cout << "Failed to read frame from camera." << std::endl;
-        last_result = empty_result;
-        return empty_result;
+        return results;
     }
 
     // Yunet expects 640x640 input
@@ -1186,74 +941,27 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     // Resize image to 640x640 keeping aspect ratio for Yunet
     cv::Mat yunet_input = resizeKeepAspectRatio(img, cv::Size(YUNET_INPUT_WIDTH, YUNET_INPUT_HEIGHT), paddingColor);
     
-    // ⏱️ Start Yunet timing
-    //uint64_t yunet_start = get_perf_count();
-    
     // --- Full Preprocessing Pipeline ---
     vsi_nn_tensor_t *tensor = vsi_nn_GetTensor( graphFaceDetect, graphFaceDetect->input.tensors[0] );
     if (tensor == nullptr) {
         std::cerr << "[ERROR] detect_face: Failed to get input tensor for Yunet graph.\n";
-        last_result = empty_result;
-        return empty_result;
+        return results;
     }
 
-    _load_input_meta_yunet(); // Ensure metadata is loaded
-
-    // 1. Convert cv::Mat (BGR uint8) to float*
-    float *fdata = _imageData_to_float32(yunet_input.data, tensor);
-    if (fdata == nullptr) {
-        std::cerr << "[ERROR] detect_face: Failed to convert image data to float32.\n";
-        last_result = empty_result;
-        return empty_result;
-    }
-
-    // 2. Apply preprocessing steps (reorder, mean, scale)
-    for(int i = 0; i < VNN_PREPRO_NUM; i++) // VNN_PREPRO_NUM is 3
-    {
-        switch (input_meta_tab_yunet[0].image.preprocess[i])
-        {
-        case VNN_PREPRO_REORDER:
-            _data_transform(fdata, &input_meta_tab_yunet[0], tensor);
-            break;
-        case VNN_PREPRO_MEAN:
-            _data_mean(fdata, &input_meta_tab_yunet[0], tensor);
-            break;
-        case VNN_PREPRO_SCALE:
-            _data_scale(fdata, &input_meta_tab_yunet[0], tensor);
-            break;
-        default:
-            break;
-        }
-    }
-
-    // 3. Convert processed float* data to target dtype (uint8_t*)
-    uint8_t *processed_img_buffer = _float32_to_dtype(fdata, tensor);
-    if (processed_img_buffer == nullptr) {
-        std::cerr << "[ERROR] detect_face: Failed to convert float32 data to target dtype.\n";
-        free(fdata); // Clean up float data
-        last_result = empty_result;
-        return empty_result;
-    }
-    free(fdata); // Clean up float data
-
-    // YUNET PREPROCESSING (now just copies the fully preprocessed buffer)
-    statusFaceDetect = vnn_PreProcessYunet(graphFaceDetect, 1, processed_img_buffer);
-
-    if (processed_img_buffer) free(processed_img_buffer); // Clean up processed buffer
+    // YUNET PREPROCESSING (now handled internally by vnn_PreProcess)
+    statusFaceDetect = vnn_PreProcess(graphFaceDetect, 1, yunet_input.data);
     // --- End Full Preprocessing Pipeline ---
 
     if (statusFaceDetect != VSI_SUCCESS) {
         std::cerr << "[YUNET] Pre-processing failed." << std::endl;
-        last_result = empty_result;
-        return empty_result;
+        return results;
     }
     // ⏱️ Only calculating Yunet timing for inference
     uint64_t yunet_start = get_perf_count();
     statusFaceDetect = vnn_ProcessGraph(graphFaceDetect);       
     if (statusFaceDetect != VSI_SUCCESS) {
         std::cerr << "[YUNET] Graph processing failed." << std::endl;
-        last_result = empty_result;
-        return empty_result;
+        return results;
     }
 
     // YUNET POSTPROCESSING - extracts faces with landmarks
@@ -1261,8 +969,7 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     statusFaceDetect = vnn_PostProcessNeuralNetworkYunet(graphFaceDetect, faces, YUNET_INPUT_WIDTH, YUNET_INPUT_HEIGHT);       
     if (statusFaceDetect != VSI_SUCCESS) {
         std::cerr << "[YUNET] Post-processing failed." << std::endl;
-        last_result = empty_result;
-        return empty_result;
+        return results;
     }
 
     // ⏱️ End Yunet timing and print result
@@ -1272,9 +979,11 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
 
     printf("[YUNET] The number of faces detected: %ld\n", faces.size());
 
-    if (faces.size() > 0) {
-        auto& face = faces[0];  // Get first detected face
-        
+    // Loop through all detected faces
+    for (const auto& face : faces) {
+        std::vector<float> facial_feature = {};
+        float spoof_confidence = 1.0; // Default to real if anti-spoofing disabled
+
         // --- CORRECT SCALING LOGIC ---
         // 1. Recalculate the scale and padding used during resizeKeepAspectRatio
         double h_scale_inv = (double)YUNET_INPUT_HEIGHT / img.rows;
@@ -1301,32 +1010,6 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
             src_landmarks[i][1] = (face.landmarks[2*i + 1] - pad_top) / scale_inv;
         }
         
-        printf("[YUNET] Scaled landmarks: RE(%.1f,%.1f) LE(%.1f,%.1f) N(%.1f,%.1f) RM(%.1f,%.1f) LM(%.1f,%.1f)\n",
-               src_landmarks[0][0], src_landmarks[0][1],
-               src_landmarks[1][0], src_landmarks[1][1],
-               src_landmarks[2][0], src_landmarks[2][1],
-               src_landmarks[3][0], src_landmarks[3][1],
-               src_landmarks[4][0], src_landmarks[4][1]);
-
-        // 💾 Debug: Draw bbox and landmarks
-        /*
-        {
-            cv::Mat debug_img = img.clone();
-            cv::rectangle(debug_img, cv::Point(left, top), cv::Point(right, bottom), cv::Scalar(0, 255, 0), 2);
-            
-            for (int i = 0; i < 5; ++i) {
-                cv::circle(debug_img, cv::Point((int)src_landmarks[i][0], (int)src_landmarks[i][1]), 2, cv::Scalar(0, 0, 255), -1);
-            }
-            
-            char debug_path[256];
-            time_t now = time(0);
-            struct tm* tm_info = localtime(&now);
-            strftime(debug_path, sizeof(debug_path), "debug_detect_bbox_%Y%m%d_%H%M%S.jpg", tm_info);
-            cv::imwrite(debug_path, debug_img);
-            printf("💾 [YUNET] Saved debug image with bbox/landmarks: %s\n", debug_path);
-        }
-        */
-
         // ✅ USE ALIGNCROP WITH YUNET LANDMARKS for better face alignment
         cv::Mat aligned_face;
         // Fix: Create 1x15 matrix to match alignCrop expectation (starts reading at index 4)
@@ -1341,27 +1024,13 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
         
         alignCrop(img, face_mat, aligned_face);
         
-        // Debug: Save aligned face
-        /*
-        char aligned_face_path[256];
-        time_t now = time(0);
-        struct tm* tm_info = localtime(&now);
-        strftime(aligned_face_path, sizeof(aligned_face_path), "debug_detect_aligned_%Y%m%d_%H%M%S.jpg", tm_info);
-        if (!aligned_face.empty()) {
-            cv::imwrite(aligned_face_path, aligned_face);
-            printf("💾 [YUNET] Saved aligned face [INPUT TO SFACE]: %s\n", aligned_face_path);
-        }
-        */
-
         // Extract facial features from aligned face (112x112 - already done by alignCrop)
         facial_feature = extractFeatures(aligned_face);
         
         // ⏱️ End Sface timing and print result
         uint64_t sface_end = get_perf_count();
         float sface_time_ms = (sface_end - sface_start) / 1000000.0f;
-        printf("⏱️  [SFACE Feature Extraction] Time: %.2f ms\n", sface_time_ms);
-        
-        printf("[Sface] Extracted facial feature vector, size: %ld\n", facial_feature.size());
+        // printf("⏱️  [SFACE Feature Extraction] Time: %.2f ms\n", sface_time_ms);
         
     #if ANTI_SPOOFING
         // Use bounding box from original image for anti-spoofing
@@ -1382,49 +1051,21 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
             cv::Scalar std(0.229, 0.224, 0.225);
             anti_spf_input = (anti_spf_input - mean) / std;
             spoof_confidence = checkSpoofing(anti_spf_input);
-            printf("[YUNET] Anti-spoofing confidence: %f\n", spoof_confidence);
-
-            // ✅ FACE RECOGNITION & ACCESS LOGGING: Only if face is real
-            if (spoof_confidence > spoof_thresh && !facial_feature.empty()) {
-                printf("=== FACE RECOGNITION SEARCH ===\n");
-                // Note: Add face database search here if available
-                std::string dummy_username = "TestUser_" + std::to_string(std::rand() % 100);
-                float dummy_similarity = 0.75f + (std::rand() % 25) / 100.0f;
-                
-                printf("✅ FACE RECOGNIZED: %s (confidence: %.4f)\n", dummy_username.c_str(), dummy_similarity);
-                
-                // ✅ ACCESS LOGGING: Check if we should log this access
-                if (shouldLogAccess(dummy_username)) {
-                    logAccess(dummy_username, dummy_similarity);
-                    printf("📝 Access logged for user: %s\n", dummy_username.c_str());
-                } else {
-                    printf("⏰ Access not logged (too soon since last access for %s)\n", dummy_username.c_str());
-                }
-                printf("===============================\n");
-            }
+            // printf("[YUNET] Anti-spoofing confidence: %f\n", spoof_confidence);
         }
-    #else
-        // No anti-spoofing, just return results
-        printf("[YUNET] No anti-spoofing enabled\n");
     #endif
         
-        // ⏱️ End total timing and print result
-        uint64_t total_end = get_perf_count();
-        float total_time_ms = (total_end - total_start) / 1000000.0f;
-        printf("⏱️  [TOTAL Processing] Time: %.2f ms\n", total_time_ms);
-        printf("=====================================\n");
-        
-        // Update last_result for smooth UI on skipped frames
-        last_result = std::make_tuple(left, top, right, bottom, spoof_confidence, facial_feature);
-        
-        return last_result;
-
-    } else {
-        // No face detected - clear last_result to avoid showing stale bbox
-        std::cerr << "[YUNET] Please capture person FACE." << std::endl;
-        last_result = empty_result;
-        return empty_result;
+        // Add result to vector
+        results.emplace_back(left, top, right, bottom, spoof_confidence, facial_feature);
     }
+
+    // ⏱️ End total timing and print result
+    uint64_t total_end = get_perf_count();
+    float total_time_ms = (total_end - total_start) / 1000000.0f;
+    printf("⏱️  [TOTAL Processing] Time: %.2f ms (Faces: %ld)\n", total_time_ms, faces.size());
+    printf("=====================================\n");
+    
+    return results;
 }
 
 std::vector<float> extractFeatures(cv::Mat img) {

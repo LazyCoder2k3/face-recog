@@ -59,23 +59,11 @@ std::tuple<uint8_t, std::vector<float>> register_user_py(py::array_t<uint8_t> _i
     return register_user(image);
 }
 
-std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> detect_face_py(py::array_t<uint8_t> _img_buf, uint16_t height, uint16_t width, const uint8_t chanels) {
+std::vector<std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>>> detect_face_py(py::array_t<uint8_t> _img_buf, uint16_t height, uint16_t width, const uint8_t chanels) {
     int depth = CV_8UC1; // unsigned char - 1 channel
-    // std::vector<uint16_t> result = {0, 0, 0, 0};
 
-    // std::cout << __FUNCTION__ << "():" << __LINE__ << std::endl;
-    // std::cout << "height: " << height << std::endl;
-    // std::cout << "width: " << width << std::endl;
-    // std::cout << "chanels: " << chanels << std::endl;
-    // auto img_buf = _img_buf.unchecked<3>();
     py::buffer_info img_buf = _img_buf.request();
-    // std::cout << "img_buf.shape(0): " << img_buf.shape[0] << std::endl;
-    // std::cout << "img_buf.shape(1): " << img_buf.shape[1] << std::endl;
-    // std::cout << "img_buf.shape(2): " << img_buf.shape[2] << std::endl;
-    // std::cout << "img_buf.ndim(): " << img_buf.ndim() << std::endl;
-    // std::cout << "chanels: " << chanels << std::endl;
     uint16_t chanels_ = img_buf.shape[2];
-    // std::cout << "chanels_: " << chanels_ << std::endl;
     switch (chanels_)
     {
     case 1:
@@ -91,12 +79,6 @@ std::tuple<uint16_t, uint16_t, uint16_t, uint16_t, float, std::vector<float>> de
     }
 
     cv::Mat image( height, width, depth, img_buf.ptr, cv::Mat::AUTO_STEP );
-
-    // result = detect_face(image);
-    // std::cout << "left: " << result[0] << std::endl;
-    // std::cout << "top: " << result[1] << std::endl;
-    // std::cout << "right: " << result[2] << std::endl;
-    // std::cout << "bottom: " << result[3] << std::endl;
 
     return detect_face(image);
 }

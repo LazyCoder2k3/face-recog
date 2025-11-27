@@ -1,0 +1,462 @@
+The system is: Linux - 6.6.87.2-microsoft-standard-WSL2 - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is GNU, found in "/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/3.16.3/CompilerIdC/a.out"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++ 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is GNU, found in "/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/3.16.3/CompilerIdCXX/a.out"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_c918d/fast && /usr/bin/make -f CMakeFiles/cmTC_c918d.dir/build.make CMakeFiles/cmTC_c918d.dir/build
+make[1]: Entering directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_c918d.dir/testCCompiler.c.o
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc    -o CMakeFiles/cmTC_c918d.dir/testCCompiler.c.o   -c /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_c918d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c918d.dir/link.txt --verbose=1
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc      CMakeFiles/cmTC_c918d.dir/testCCompiler.c.o  -o cmTC_c918d 
+make[1]: Leaving directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_5c53f/fast && /usr/bin/make -f CMakeFiles/cmTC_5c53f.dir/build.make CMakeFiles/cmTC_5c53f.dir/build
+make[1]: Entering directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc   -v -o CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c
+Using built-in specs.
+COLLECT_GCC=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc
+Target: aarch64-none-linux-gnu
+Configured with: /tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/src/gcc/configure --target=aarch64-none-linux-gnu --prefix= --with-sysroot=/aarch64-none-linux-gnu/libc --with-build-sysroot=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/install//aarch64-none-linux-gnu/libc --with-bugurl=https://bugs.linaro.org/ --enable-gnu-indirect-function --enable-shared --disable-libssp --disable-libmudflap --enable-checking=release --enable-languages=c,c++,fortran --with-gmp=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpfr=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpc=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-isl=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --enable-fix-cortex-a53-843419 --with-pkgversion='GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)'
+Thread model: posix
+gcc version 9.2.1 20191025 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o' '-c' '-mlittle-endian' '-mabi=lp64'
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/cc1 -quiet -v -iprefix /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/ -isysroot /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mlittle-endian -mabi=lp64 -auxbase-strip CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccWyQutu.s
+GNU C17 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) version 9.2.1 20191025 (aarch64-none-linux-gnu)
+	compiled by GNU C version 4.8.1, GMP version 4.3.2, MPFR version 3.1.6, MPC version 1.0.3, isl version isl-0.15-1-g835ea3a-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/include"
+ignoring nonexistent directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/local/include"
+ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed"
+ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/include
+End of search list.
+GNU C17 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) version 9.2.1 20191025 (aarch64-none-linux-gnu)
+	compiled by GNU C version 4.8.1, GMP version 4.3.2, MPFR version 3.1.6, MPC version 1.0.3, isl version isl-0.15-1-g835ea3a-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 85e1dc113eca18ee24842097eb6e9185
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o' '-c' '-mlittle-endian' '-mabi=lp64'
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/as -v -EL -mabi=lp64 -o CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o /tmp/ccWyQutu.s
+GNU assembler version 2.33.1 (aarch64-none-linux-gnu) using BFD version (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 2.33.1.20191209
+COMPILER_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/
+LIBRARY_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o' '-c' '-mlittle-endian' '-mabi=lp64'
+Linking C executable cmTC_5c53f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5c53f.dir/link.txt --verbose=1
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc     -v CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o  -o cmTC_5c53f 
+Using built-in specs.
+COLLECT_GCC=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc
+COLLECT_LTO_WRAPPER=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper
+Target: aarch64-none-linux-gnu
+Configured with: /tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/src/gcc/configure --target=aarch64-none-linux-gnu --prefix= --with-sysroot=/aarch64-none-linux-gnu/libc --with-build-sysroot=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/install//aarch64-none-linux-gnu/libc --with-bugurl=https://bugs.linaro.org/ --enable-gnu-indirect-function --enable-shared --disable-libssp --disable-libmudflap --enable-checking=release --enable-languages=c,c++,fortran --with-gmp=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpfr=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpc=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-isl=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --enable-fix-cortex-a53-843419 --with-pkgversion='GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)'
+Thread model: posix
+gcc version 9.2.1 20191025 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 
+COMPILER_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/
+LIBRARY_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_5c53f' '-mlittle-endian' '-mabi=lp64'
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/collect2 -plugin /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/liblto_plugin.so -plugin-opt=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsTpO9W.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc --eh-frame-hdr -dynamic-linker /lib/ld-linux-aarch64.so.1 -X -EL -maarch64linux --fix-cortex-a53-843419 -o cmTC_5c53f /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crt1.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crti.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtbegin.o -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtend.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_5c53f' '-mlittle-endian' '-mabi=lp64'
+make[1]: Leaving directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed C implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include]
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed]
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include]
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/include]
+  end of search list found
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include]
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed]
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include]
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/include] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/include]
+  implicit include dirs: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/include]
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_5c53f/fast && /usr/bin/make -f CMakeFiles/cmTC_5c53f.dir/build.make CMakeFiles/cmTC_5c53f.dir/build]
+  ignore line: [make[1]: Entering directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building C object CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc   -v -o CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc]
+  ignore line: [Target: aarch64-none-linux-gnu]
+  ignore line: [Configured with: /tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/src/gcc/configure --target=aarch64-none-linux-gnu --prefix= --with-sysroot=/aarch64-none-linux-gnu/libc --with-build-sysroot=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/install//aarch64-none-linux-gnu/libc --with-bugurl=https://bugs.linaro.org/ --enable-gnu-indirect-function --enable-shared --disable-libssp --disable-libmudflap --enable-checking=release --enable-languages=c c++ fortran --with-gmp=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpfr=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpc=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-isl=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --enable-fix-cortex-a53-843419 --with-pkgversion='GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)']
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 9.2.1 20191025 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o' '-c' '-mlittle-endian' '-mabi=lp64']
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/cc1 -quiet -v -iprefix /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/ -isysroot /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mlittle-endian -mabi=lp64 -auxbase-strip CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccWyQutu.s]
+  ignore line: [GNU C17 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) version 9.2.1 20191025 (aarch64-none-linux-gnu)]
+  ignore line: [	compiled by GNU C version 4.8.1  GMP version 4.3.2  MPFR version 3.1.6  MPC version 1.0.3  isl version isl-0.15-1-g835ea3a-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/include"]
+  ignore line: [ignoring nonexistent directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/local/include"]
+  ignore line: [ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed"]
+  ignore line: [ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C17 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) version 9.2.1 20191025 (aarch64-none-linux-gnu)]
+  ignore line: [	compiled by GNU C version 4.8.1  GMP version 4.3.2  MPFR version 3.1.6  MPC version 1.0.3  isl version isl-0.15-1-g835ea3a-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: 85e1dc113eca18ee24842097eb6e9185]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o' '-c' '-mlittle-endian' '-mabi=lp64']
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/as -v -EL -mabi=lp64 -o CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o /tmp/ccWyQutu.s]
+  ignore line: [GNU assembler version 2.33.1 (aarch64-none-linux-gnu) using BFD version (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 2.33.1.20191209]
+  ignore line: [COMPILER_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/]
+  ignore line: [LIBRARY_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o' '-c' '-mlittle-endian' '-mabi=lp64']
+  ignore line: [Linking C executable cmTC_5c53f]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5c53f.dir/link.txt --verbose=1]
+  ignore line: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc     -v CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o  -o cmTC_5c53f ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc]
+  ignore line: [COLLECT_LTO_WRAPPER=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper]
+  ignore line: [Target: aarch64-none-linux-gnu]
+  ignore line: [Configured with: /tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/src/gcc/configure --target=aarch64-none-linux-gnu --prefix= --with-sysroot=/aarch64-none-linux-gnu/libc --with-build-sysroot=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/install//aarch64-none-linux-gnu/libc --with-bugurl=https://bugs.linaro.org/ --enable-gnu-indirect-function --enable-shared --disable-libssp --disable-libmudflap --enable-checking=release --enable-languages=c c++ fortran --with-gmp=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpfr=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpc=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-isl=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --enable-fix-cortex-a53-843419 --with-pkgversion='GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)']
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 9.2.1 20191025 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) ]
+  ignore line: [COMPILER_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/]
+  ignore line: [LIBRARY_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_5c53f' '-mlittle-endian' '-mabi=lp64']
+  link line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/collect2 -plugin /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/liblto_plugin.so -plugin-opt=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsTpO9W.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc --eh-frame-hdr -dynamic-linker /lib/ld-linux-aarch64.so.1 -X -EL -maarch64linux --fix-cortex-a53-843419 -o cmTC_5c53f /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crt1.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crti.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtbegin.o -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtend.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crtn.o]
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccsTpO9W.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [--sysroot=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib/ld-linux-aarch64.so.1] ==> ignore
+    arg [-X] ==> ignore
+    arg [-EL] ==> ignore
+    arg [-maarch64linux] ==> ignore
+    arg [--fix-cortex-a53-843419] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_5c53f] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crt1.o] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crti.o] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtbegin.o] ==> ignore
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib]
+    arg [CMakeFiles/cmTC_5c53f.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lgcc] ==> lib [gcc]
+    arg [--push-state] ==> ignore
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--pop-state] ==> ignore
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [--push-state] ==> ignore
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--pop-state] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtend.o] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crtn.o] ==> ignore
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/lib64]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/lib64]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/lib]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/lib]
+  implicit libs: [gcc;gcc_s;c;gcc;gcc_s]
+  implicit dirs: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/lib64;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/lib64;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/lib;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/lib]
+  implicit fwks: []
+
+
+Determining if the CXX compiler works passed with the following output:
+Change Dir: /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_a2ceb/fast && /usr/bin/make -f CMakeFiles/cmTC_a2ceb.dir/build.make CMakeFiles/cmTC_a2ceb.dir/build
+make[1]: Entering directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_a2ceb.dir/testCXXCompiler.cxx.o
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++     -o CMakeFiles/cmTC_a2ceb.dir/testCXXCompiler.cxx.o -c /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_a2ceb
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a2ceb.dir/link.txt --verbose=1
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++       CMakeFiles/cmTC_a2ceb.dir/testCXXCompiler.cxx.o  -o cmTC_a2ceb 
+make[1]: Leaving directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_0f163/fast && /usr/bin/make -f CMakeFiles/cmTC_0f163.dir/build.make CMakeFiles/cmTC_0f163.dir/build
+make[1]: Entering directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++    -v -o CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp
+Using built-in specs.
+COLLECT_GCC=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++
+Target: aarch64-none-linux-gnu
+Configured with: /tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/src/gcc/configure --target=aarch64-none-linux-gnu --prefix= --with-sysroot=/aarch64-none-linux-gnu/libc --with-build-sysroot=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/install//aarch64-none-linux-gnu/libc --with-bugurl=https://bugs.linaro.org/ --enable-gnu-indirect-function --enable-shared --disable-libssp --disable-libmudflap --enable-checking=release --enable-languages=c,c++,fortran --with-gmp=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpfr=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpc=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-isl=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --enable-fix-cortex-a53-843419 --with-pkgversion='GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)'
+Thread model: posix
+gcc version 9.2.1 20191025 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64'
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/cc1plus -quiet -v -iprefix /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/ -isysroot /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc -D_GNU_SOURCE /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mlittle-endian -mabi=lp64 -auxbase-strip CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccPNV84r.s
+GNU C++14 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) version 9.2.1 20191025 (aarch64-none-linux-gnu)
+	compiled by GNU C version 4.8.1, GMP version 4.3.2, MPFR version 3.1.6, MPC version 1.0.3, isl version isl-0.15-1-g835ea3a-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1"
+ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu"
+ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/backward"
+ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/include"
+ignoring nonexistent directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/local/include"
+ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed"
+ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/backward
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/include
+End of search list.
+GNU C++14 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) version 9.2.1 20191025 (aarch64-none-linux-gnu)
+	compiled by GNU C version 4.8.1, GMP version 4.3.2, MPFR version 3.1.6, MPC version 1.0.3, isl version isl-0.15-1-g835ea3a-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 2c1b06ae38fc097703f75fa12d3b7029
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64'
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/as -v -EL -mabi=lp64 -o CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccPNV84r.s
+GNU assembler version 2.33.1 (aarch64-none-linux-gnu) using BFD version (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 2.33.1.20191209
+COMPILER_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/
+LIBRARY_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64'
+Linking CXX executable cmTC_0f163
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0f163.dir/link.txt --verbose=1
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++      -v CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_0f163 
+Using built-in specs.
+COLLECT_GCC=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++
+COLLECT_LTO_WRAPPER=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper
+Target: aarch64-none-linux-gnu
+Configured with: /tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/src/gcc/configure --target=aarch64-none-linux-gnu --prefix= --with-sysroot=/aarch64-none-linux-gnu/libc --with-build-sysroot=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/install//aarch64-none-linux-gnu/libc --with-bugurl=https://bugs.linaro.org/ --enable-gnu-indirect-function --enable-shared --disable-libssp --disable-libmudflap --enable-checking=release --enable-languages=c,c++,fortran --with-gmp=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpfr=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpc=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-isl=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --enable-fix-cortex-a53-843419 --with-pkgversion='GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)'
+Thread model: posix
+gcc version 9.2.1 20191025 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 
+COMPILER_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/
+LIBRARY_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0f163' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64'
+ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/collect2 -plugin /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/liblto_plugin.so -plugin-opt=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccc9sTUW.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc --eh-frame-hdr -dynamic-linker /lib/ld-linux-aarch64.so.1 -X -EL -maarch64linux --fix-cortex-a53-843419 -o cmTC_0f163 /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crt1.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crti.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtbegin.o -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtend.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0f163' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64'
+make[1]: Leaving directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1]
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu]
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/backward]
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include]
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed]
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include]
+    add: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/include]
+  end of search list found
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include/c++/9.2.1]
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu]
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/backward] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include/c++/9.2.1/backward]
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include]
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed]
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include]
+  collapse include dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/include] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/include]
+  implicit include dirs: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include/c++/9.2.1;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include/c++/9.2.1/backward;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/include;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_0f163/fast && /usr/bin/make -f CMakeFiles/cmTC_0f163.dir/build.make CMakeFiles/cmTC_0f163.dir/build]
+  ignore line: [make[1]: Entering directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building CXX object CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++    -v -o CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++]
+  ignore line: [Target: aarch64-none-linux-gnu]
+  ignore line: [Configured with: /tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/src/gcc/configure --target=aarch64-none-linux-gnu --prefix= --with-sysroot=/aarch64-none-linux-gnu/libc --with-build-sysroot=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/install//aarch64-none-linux-gnu/libc --with-bugurl=https://bugs.linaro.org/ --enable-gnu-indirect-function --enable-shared --disable-libssp --disable-libmudflap --enable-checking=release --enable-languages=c c++ fortran --with-gmp=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpfr=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpc=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-isl=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --enable-fix-cortex-a53-843419 --with-pkgversion='GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)']
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 9.2.1 20191025 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64']
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/cc1plus -quiet -v -iprefix /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/ -isysroot /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc -D_GNU_SOURCE /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mlittle-endian -mabi=lp64 -auxbase-strip CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccPNV84r.s]
+  ignore line: [GNU C++14 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) version 9.2.1 20191025 (aarch64-none-linux-gnu)]
+  ignore line: [	compiled by GNU C version 4.8.1  GMP version 4.3.2  MPFR version 3.1.6  MPC version 1.0.3  isl version isl-0.15-1-g835ea3a-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1"]
+  ignore line: [ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu"]
+  ignore line: [ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/backward"]
+  ignore line: [ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/include"]
+  ignore line: [ignoring nonexistent directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/local/include"]
+  ignore line: [ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed"]
+  ignore line: [ignoring duplicate directory "/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/../../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include/c++/9.2.1/backward]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/include]
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C++14 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) version 9.2.1 20191025 (aarch64-none-linux-gnu)]
+  ignore line: [	compiled by GNU C version 4.8.1  GMP version 4.3.2  MPFR version 3.1.6  MPC version 1.0.3  isl version isl-0.15-1-g835ea3a-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: 2c1b06ae38fc097703f75fa12d3b7029]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64']
+  ignore line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/as -v -EL -mabi=lp64 -o CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccPNV84r.s]
+  ignore line: [GNU assembler version 2.33.1 (aarch64-none-linux-gnu) using BFD version (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 2.33.1.20191209]
+  ignore line: [COMPILER_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/]
+  ignore line: [LIBRARY_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64']
+  ignore line: [Linking CXX executable cmTC_0f163]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0f163.dir/link.txt --verbose=1]
+  ignore line: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++      -v CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_0f163 ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++]
+  ignore line: [COLLECT_LTO_WRAPPER=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper]
+  ignore line: [Target: aarch64-none-linux-gnu]
+  ignore line: [Configured with: /tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/src/gcc/configure --target=aarch64-none-linux-gnu --prefix= --with-sysroot=/aarch64-none-linux-gnu/libc --with-build-sysroot=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/install//aarch64-none-linux-gnu/libc --with-bugurl=https://bugs.linaro.org/ --enable-gnu-indirect-function --enable-shared --disable-libssp --disable-libmudflap --enable-checking=release --enable-languages=c c++ fortran --with-gmp=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpfr=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-mpc=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --with-isl=/tmp/dgboter/bbs/rhev-vm2--rhe6x86_64/buildbot/rhe6x86_64--aarch64-none-linux-gnu/build/build-aarch64-none-linux-gnu/host-tools --enable-fix-cortex-a53-843419 --with-pkgversion='GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)']
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 9.2.1 20191025 (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) ]
+  ignore line: [COMPILER_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/bin/]
+  ignore line: [LIBRARY_PATH=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/:/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0f163' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64']
+  link line: [ /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/collect2 -plugin /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/liblto_plugin.so -plugin-opt=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccc9sTUW.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc --eh-frame-hdr -dynamic-linker /lib/ld-linux-aarch64.so.1 -X -EL -maarch64linux --fix-cortex-a53-843419 -o cmTC_0f163 /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crt1.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crti.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtbegin.o -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64 -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib -L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtend.o /mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crtn.o]
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/9.2.1/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccc9sTUW.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [--sysroot=/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib/ld-linux-aarch64.so.1] ==> ignore
+    arg [-X] ==> ignore
+    arg [-EL] ==> ignore
+    arg [-maarch64linux] ==> ignore
+    arg [--fix-cortex-a53-843419] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_0f163] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crt1.o] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crti.o] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtbegin.o] ==> ignore
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib]
+    arg [-L/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib] ==> dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib]
+    arg [CMakeFiles/cmTC_0f163.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lstdc++] ==> lib [stdc++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/crtend.o] ==> ignore
+    arg [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64/crtn.o] ==> ignore
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib/../lib64] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/lib64]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib/../lib64] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib/../lib64] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/lib64]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../lib/gcc/aarch64-none-linux-gnu/9.2.1/../../../../aarch64-none-linux-gnu/lib] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/lib]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/lib] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib]
+  collapse library dir [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc/usr/lib] ==> [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/lib]
+  implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+  implicit dirs: [/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/lib/gcc;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/lib64;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/lib64;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/lib;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib;/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/usr/lib]
+  implicit fwks: []
+
+
+Performing C++ SOURCE FILE Test HAS_FLTO succeeded with the following output:
+Change Dir: /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_cdaf7/fast && /usr/bin/make -f CMakeFiles/cmTC_cdaf7.dir/build.make CMakeFiles/cmTC_cdaf7.dir/build
+make[1]: Entering directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_cdaf7.dir/src.cxx.o
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++    -DHAS_FLTO   -flto -fno-fat-lto-objects -o CMakeFiles/cmTC_cdaf7.dir/src.cxx.o -c /mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_cdaf7
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cdaf7.dir/link.txt --verbose=1
+/mnt/i/AnhTu/Internship/working/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++   -DHAS_FLTO    CMakeFiles/cmTC_cdaf7.dir/src.cxx.o  -o cmTC_cdaf7  -flto 
+make[1]: Leaving directory '/mnt/i/AnhTu/VNEMEX/face-recog/FaceRecognition_sface_pybind/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }

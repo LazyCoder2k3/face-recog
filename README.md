@@ -78,6 +78,9 @@ export VIVANTE_SDK_DIR=YOUR_PATH/6.4.15.9
 cd face_recognition_sface_2021dec_ovx
 make clean
 make
+
+Or you can use ./make_file_only.sh (edit the script to set your path) for only making file. 
+Using ./build_wrapper.sh (edit the script to set your path) for making and pushing .so into target device. 
 ```
 
 4) (Optional) Rebuild Python bindings if you changed bindings:
@@ -101,10 +104,10 @@ ssh itri@10.60.3.235
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/itri/Working/prebuilt/opencv/lib
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD
 
-cd ~/Working/Demo/
+cd YOUR_PATH
 source venv_3.8/bin/activate
 
-cd ~/Working/NATu/FaceRecognition-FAISS
+cd YOUR_PATH/FaceRecognition-FAISS
 streamlit run app_streamlit.py
 ```
 

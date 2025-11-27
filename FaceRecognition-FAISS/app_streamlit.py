@@ -76,10 +76,8 @@ def get_ws_client(uri, _status_queue, _user_management, _faiss_index):
 # SESSION STATE INITIALIZATION
 # ==============================================================================
 
-if "last_known_box" not in st.session_state:
-    st.session_state.last_known_box = None
-if "last_known_text" not in st.session_state:
-    st.session_state.last_known_text = ""
+if "last_known_faces" not in st.session_state:
+    st.session_state.last_known_faces = [] # List of dicts: {'box': (l,t,r,b), 'name': str}
 if "no_face_counter" not in st.session_state:
     st.session_state.no_face_counter = 0
 if "cos_sim_thresh" not in st.session_state:
@@ -329,104 +327,71 @@ if st.session_state.camera_active:
         
         if tmp == 0:
             # Detect
-            left, top, right, bottom, spoof, feat = FR.detect_face(frame, frame.shape[0], frame.shape[1], frame.shape[2])
+            faces_result = FR.detect_face(frame, frame.shape[0], frame.shape[1], frame.shape[2])
             
-            # Logic xử lý Bounding Box & Counter
-            if left > 0 and top > 0:
-                # Có mặt -> Cập nhật box và reset counter
-                st.session_state.last_known_box = (left, top, right, bottom)
-                #st.session_state.no_face_counter = 0
+            new_faces_list = []
+            
+            for face_res in faces_result:
+                left, top, right, bottom, spoof, feat = face_res
                 
-                # Recognize
-                name_display = "Unknown"
-                user_uuid = None
-                top_k_info = [] # List of (name, score)
-                
-                if len(feat) == 128 and faiss_index.ntotal > 0:
-                    vec = np.array(feat, dtype='float32').reshape(1, 128)
-                    faiss.normalize_L2(vec)
+                if left > 0 and top > 0:
+                    # Recognize
+                    name_display = "Unknown"
+                    user_uuid = None
                     
-                    # Search Top K (k=3)
-                    k = 3
-                    dists, idxs = faiss_index.search(vec, k)
-                    
-                    print(f"\n{'='*40}")
-                    print(f"🔍 Recognition Debug (Top {k}):")
-                    
-                    best_match_name = None
-                    best_score = -1.0
-                    
-                    if len(idxs) > 0 and len(idxs[0]) > 0:
-                        for i, int_id in enumerate(idxs[0]):
-                            score = dists[0][i]
-                            if int_id != -1:
-                                user_info = user_management.get_user_by_id(int_id)
-                                if user_info:
-                                    u_name = user_info['name']
-                                    print(f"   #{i+1}: {u_name} (ID: {int_id}) - Similarity: {score:.4f}")
-                                    top_k_info.append((u_name, score))
-                                    
-                                    # Logic chọn best match
-                                    if i == 0 and score >= st.session_state.cos_sim_thresh:
-                                        best_match_name = u_name
-                                        best_score = score
-                                        user_uuid = user_info['uuid']
-                                else:
-                                    print(f"   #{i+1}: ID {int_id} not found in DB - Score: {score:.4f}")
-                            else:
-                                print(f"   #{i+1}: No match")
+                    if len(feat) == 128 and faiss_index.ntotal > 0:
+                        vec = np.array(feat, dtype='float32').reshape(1, 128)
+                        faiss.normalize_L2(vec)
+                        
+                        # Search Top K (k=3)
+                        k = 3
+                        dists, idxs = faiss_index.search(vec, k)
+                        
+                        best_match_name = None
+                        best_score = -1.0
+                        
+                        if len(idxs) > 0 and len(idxs[0]) > 0:
+                            for i, int_id in enumerate(idxs[0]):
+                                score = dists[0][i]
+                                if int_id != -1:
+                                    user_info = user_management.get_user_by_id(int_id)
+                                    if user_info:
+                                        u_name = user_info['name']
+                                        # Logic chọn best match
+                                        if i == 0 and score >= st.session_state.cos_sim_thresh:
+                                            best_match_name = u_name
+                                            best_score = score
+                                            user_uuid = user_info['uuid']
 
-                    if best_match_name:
-                        name_display = f"{best_match_name} ({best_score:.2f})"
-                        print(f"✅ Final Result: {best_match_name}")
-                    else:
-                        print(f"❌ Final Result: Unknown (Best score < {st.session_state.cos_sim_thresh})")
-                    print(f"{'='*40}\n")
-                
-                st.session_state.last_known_text = name_display
-                st.session_state.last_top_k = top_k_info # Store for display
-                
-                # Log & Send WS Message
-                if best_match_name:
-                    # 1. Log to History
-                    if access_history.log_access(best_match_name):
-                        update_history_display(history_placeholder)
+                        if best_match_name:
+                            name_display = f"{best_match_name} ({best_score:.2f})"
+                            # Log & Send WS Message
+                            if access_history.log_access(best_match_name):
+                                update_history_display(history_placeholder)
+                            
+                            if ws_client and user_uuid:
+                                now = time.time()
+                                last_time = st.session_state.last_sent_recognize.get(user_uuid, 0)
+                                if now - last_time > 5.0: # Send max once every 5s
+                                    ws_client.send_recognize_message(deviceId=1, faceId=user_uuid)
+                                    st.session_state.last_sent_recognize[user_uuid] = now
+                                    print(f"Sent recognize message for {best_match_name}")
                     
-                    # 2. Send WS Message (Debounced)
-                    if ws_client and user_uuid:
-                        now = time.time()
-                        last_time = st.session_state.last_sent_recognize.get(user_uuid, 0)
-                        if now - last_time > 5.0: # Send max once every 5s
-                            ws_client.send_recognize_message(deviceId=1, faceId=user_uuid)
-                            st.session_state.last_sent_recognize[user_uuid] = now
-                            print(f"Sent recognize message for {best_match_name}")
+                    new_faces_list.append({
+                        'box': (left, top, right, bottom),
+                        'name': name_display
+                    })
+            
+            st.session_state.last_known_faces = new_faces_list
 
-            else:
-                # Không thấy mặt trong frame này
-                #st.session_state.no_face_counter += 1
-                st.session_state.last_known_box = None
-                st.session_state.last_known_text = ""
-                st.session_state.last_top_k = []
-                
-                # Restore backup logic: Only clear after 10 consecutive misses to prevent flickering
-                # if st.session_state.no_face_counter >= 10:
-                #      st.session_state.last_known_box = None
-                #      st.session_state.last_known_text = ""
-                #      st.session_state.last_top_k = []
-        else:
-            st.session_state.last_known_box = st.session_state.last_known_box
-            st.session_state.last_known_text = st.session_state.last_known_text
-            st.session_state.last_top_k = st.session_state.last_top_k
         # D. Draw Logic (Apply to every frame based on last known state)
-        if st.session_state.last_known_box:
-            l, t, r, b = st.session_state.last_known_box
+        for face_data in st.session_state.last_known_faces:
+            l, t, r, b = face_data['box']
             cv2.rectangle(display_frame, (l, t), (r, b), (0, 255, 0), 2)
             
             # Draw Name
-            txt = st.session_state.last_known_text
+            txt = face_data['name']
             cv2.putText(display_frame, txt, (l, t-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
-            
-            # Removed on-screen Top-K display as requested
 
         # Update counter
         tmp = (tmp + 1) % FREQUENCY
